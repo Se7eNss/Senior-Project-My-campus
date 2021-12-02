@@ -13,11 +13,13 @@ app.use(fileUpload());
 
 const user = require('./routes/user');
 const event = require('./routes/event');
+const comment = require('./routes/comment');
+
 
 
 app.use('/api/v1',user);
 app.use('/api/v1',event);
-
+app.use('/api/v1',comment);
 
 app.use(errorMiddleware);
 

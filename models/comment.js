@@ -2,10 +2,9 @@ const mongoose = require ('mongoose');
 
 
 const commnetSchema = mongoose.Schema({
-    user:{
+    userId:{
         type:mongoose.Schema.ObjectId,
         ref:'User',
-        required:true
     },
     image:{
         public_id:{
@@ -23,20 +22,17 @@ const commnetSchema = mongoose.Schema({
     },
     rate:{
         type:Number,
-        required:true,
         default:0
     },
     status:{
         type:String,
-        required:true,
         default:'active'
     },
     createdAt:{
         type:Date,
         default:Date.now
-    }
-
-    //after created event model  add ref from event
+    },
+    eventId: {type:mongoose.Types.ObjectId, ref:'Event'}
 })
 
 module.exports = mongoose.model('Comment',commnetSchema);

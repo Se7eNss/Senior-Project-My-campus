@@ -27,6 +27,18 @@ exports.getEvents = catchAsyncError(async(req,res,next)=>{
     
 })
 
+//event detail => /api/event/:id
+exports.eventDetail = catchAsyncError(async(req,res,next)=>{
+    const event = await Event.findById(req.params.id);
+
+    res.status(200).json({
+        succes:true,
+        event
+    })
+
+})
+
+
 //set event active => /api/event/:id
 exports.updateStatus= catchAsyncError(async(req,res,next)=>{
     const event = await Event.findOne({user:req.user.id ,_id:req.params.id});

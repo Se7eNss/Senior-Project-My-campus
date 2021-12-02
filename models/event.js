@@ -39,7 +39,7 @@ const eventSchema = mongoose.Schema({
     },
     comments:[
         {
-            type:mongoose.Schema.ObjectId,
+            type:mongoose.Types.ObjectId,
             ref:'Comment'
         }
     ],
