@@ -1,0 +1,24 @@
+.loading{
+    height: 100vh;
+    svg{
+       .path{
+        fill-opacity: 0;
+        stroke: #FF847C;
+        stroke-width: 1;
+        stroke-dashoffset: 2;
+        stroke-dasharray: 3000;
+        animation: animate 4s ease-in infinite;
+    }
+    }
+}
+
+@keyframes animate {
+    0%{
+        stroke-dashoffset: 3000;
+        fill: none;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        fill: #FF847C !important;
+    }
+}
