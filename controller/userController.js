@@ -19,11 +19,12 @@ exports.registerUser = catchAsyncErrors(async(req,res,next)=>{
     // })
 
     const {name,email,password} = req.body;
-
+    
     const user = await User.create({
         name,
         email,
-        password
+        password,
+        avatar
     })
     sendToken(user,200,res);
 })
@@ -37,19 +38,19 @@ exports.loginUser = catchAsyncErrors(async(req,res,next)=>{
         return next(new ErrorHandler('Please enter email and password', 400))
     }
     //finding user in db
-    const user = await User.findOne({email}).select('+password');
+    const userd = await User.findOne({email}).select('+password');
 
-    if(!user){
+    if(!userd){
         return   next(new ErrorHandler('Invalid Email or Password',401))
     }
 
     //checks if password correct or not
-    const isPasswordMatched = await user.comparePassword(password); 
+    const isPasswordMatched = await userd.comparePassword(password); 
 
     if(!isPasswordMatched){
         return next(new ErrorHandler('Invalid Email or Password',401))
     }
-
+    const user= await User.findById(userd.id)
     sendToken(user,200,res);
 })
 
@@ -123,10 +124,10 @@ exports.resetPassword = catchAsyncErrors(async(req,res,next)=>{
 
 // get currently logged in user details  => /api/v1/me
 exports.getUserProfile = catchAsyncErrors(async(req,res,next)=>{
-    const userProfile = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id);
     res.status(200).json({
         success:true,
-        userProfile
+        user
     })
 })
 

@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         },
         url:{
             type:String,
-            default:"sadsadsa"
+            default:"assets/images/avatar.png"
         }
     },
     phone:{

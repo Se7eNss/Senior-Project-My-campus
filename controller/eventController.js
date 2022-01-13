@@ -7,7 +7,7 @@ const ErrorHandler = require('../utils/errorHandler');
 
 exports.newEvent = catchAsyncError(async(req,res,next)=>{
     req.body.user = req.user.id;
-
+    
     const event = await Event.create(req.body);
     res.status(201).json({
         success:true,

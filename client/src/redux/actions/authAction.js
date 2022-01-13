@@ -37,6 +37,10 @@ export const login = (data) => async (dispatch) => {
                 error: err.response.data.errMessage
             }
         })
+        dispatch({
+            type:NOTIFY,
+            payload:{}
+        })
     }
 }
 
@@ -51,8 +55,6 @@ export const register = (data) => async (dispatch) => {
                 user: res.data.user
             }
         })
-        localStorage.setItem("firstlogin", true)
-       
         const options ={
             expires: new Date (
                 Date.now() + 7 *24 *60 *60 *1000
@@ -71,6 +73,10 @@ export const register = (data) => async (dispatch) => {
             payload: {
                 error: err.response.data.errMessage
             }
+        })
+        dispatch({
+            type:NOTIFY,
+            payload:{}
         })
     }
 }
@@ -92,6 +98,10 @@ export const getUser = () => async (dispatch) => {
                 error: err.response.data.errMessage
             }
         })
+        dispatch({
+            type:NOTIFY,
+            payload:''
+        })
     }
 }
 
@@ -106,10 +116,18 @@ export const logout = () => async (dispatch)=>{
             type:AUTH,
             payload:data
         })
+        dispatch({
+            type:AUTH,
+            payload:{}
+        })
     } catch (error) {
         dispatch({
             type:NOTIFY,
             payload:error.response.data.messsage
+        })
+        dispatch({
+            type:NOTIFY,
+            payload:{}
         })
     }
 }

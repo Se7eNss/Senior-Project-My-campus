@@ -17,18 +17,20 @@ const Login = () => {
     const {notify,auth} = useSelector(state => state)
 
     useEffect(() => {
-        if(auth.success){
+        if(auth.user || auth.userProfile){
+            if(notify.success){
+                alert.success('success')
+            }
+            else{
+                alert.success('Already logged in.')
+            }
             navigate('/')
         }
         if(notify.error){
             if(notify.error != 'jwt malformed')
             alert.error(notify.error)
         }
-        if(notify.success){
-            alert.success('success')
-            navigate('/home')
-        }
-    }, [notify])
+    }, [notify,auth])
     
     const handleChange=(e)=>{
         const{name,value}=e.target
@@ -72,8 +74,8 @@ const Login = () => {
                                     </div>
                                     <hr className="my-4"/>
                                         <div className="d-grid ">
-                                            <button className="btn btn-google btn-login text-uppercase fw-bold" type="submit">
-                                                <i className="fab fa-google me-2"></i> Sign in with UniKa
+                                            <button className="btn btn-google btn-login text-uppercase fw-bold" onClick={()=>navigate('/register')}>
+                                                <i className="fab fa-google me-2"></i> Register
                                             </button>
                                         </div>
                                 </form>
