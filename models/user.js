@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
         type:Number,
         required:false,
     },
+    faculty:{
+        type:String,
+        required:false,
+    },
     comments:[
         {
             type:mongoose.Schema.ObjectId,
@@ -46,6 +50,18 @@ const userSchema = new mongoose.Schema({
     score:{
         type:Number,
         default:0
+    },
+    instagram:{
+        type:String,
+        required:false,
+    },
+    facebook:{
+        type:String,
+        required:false,
+    },
+    twitter:{
+        type:String,
+        required:false,
     },
     status:{
         type:Boolean,

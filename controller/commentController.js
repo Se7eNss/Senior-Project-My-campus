@@ -15,7 +15,7 @@ exports.newComment = catchAsyncError(async(req,res,next)=>{
         const { eventId, image, comment} = req.body
         const userId = req.user.id
 
-        const event = await Event.findById(eventId)
+        const event = await Event.findById(eventId).populate('event').populate('userId')
         if(!event) return res.status(400).json({msg: "This post does not exist."})
 
         const newComment = new Comment({
@@ -38,6 +38,18 @@ exports.newComment = catchAsyncError(async(req,res,next)=>{
         return res.status(500).json({msg: err.message})
     }
 })
+
+// get all comments for user => /api/v1/:id/comment
+exports.getUserComments = catchAsyncError(async(req,res,next)=>{
+    try {
+        const userId = req.params.id
+        const comments = await Comment.find({userId:userId}).populate({path:'eventId',select:['title','comments']}).populate({path:'userId',select:['name','avatar']})
+        res.json({comments})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+})
+
 
 //create new comment => /api/v1/:id/:cid
 

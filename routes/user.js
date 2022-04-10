@@ -8,7 +8,9 @@ const{registerUser,
         getUserProfile,
         updatePassword,
         updateProfile,
-        logout
+        logout,
+        getUserProfileById,
+        getOthersProfileById
                 } = require('../controller/userController');
 const {isAuthenticatedUser,authorizeRoles} = require('../middlewares/auth')
 
@@ -23,6 +25,8 @@ router.route('/logout').get(logout);
 
 //profile
 router.route('/me').get(isAuthenticatedUser,getUserProfile);
+router.route('/profile/:id').get(getOthersProfileById);
+router.route('/profile').get(isAuthenticatedUser,getUserProfileById);
 router.route('/password/update').put(isAuthenticatedUser,updatePassword);
 router.route('/me/update').put(isAuthenticatedUser,updateProfile)
 

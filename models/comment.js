@@ -32,7 +32,7 @@ const commnetSchema = mongoose.Schema({
         type:Date,
         default:Date.now
     },
-    eventId: {type:mongoose.Types.ObjectId, ref:'Event'}
+    eventId: {type:mongoose.Schema.ObjectId, ref:'Event'}
 })
 
 module.exports = mongoose.model('Comment',commnetSchema);

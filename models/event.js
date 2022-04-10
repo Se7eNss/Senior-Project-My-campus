@@ -46,11 +46,9 @@ const eventSchema = mongoose.Schema({
     eventImage:{
         public_id:{
             type:String,
-            required:true
         },
         url:{
             type:String,
-            required:true
         }
     },
     createdAt:{

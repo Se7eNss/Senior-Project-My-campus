@@ -1,5 +1,6 @@
 const catchAsyncError = require('../middlewares/catchAsyncError');
 const Event = require('../models/event');
+const Comment = require('../models/comment');
 const ErrorHandler = require('../utils/errorHandler');
 
 
@@ -18,8 +19,8 @@ exports.newEvent = catchAsyncError(async(req,res,next)=>{
 //show all event => /api/v1/event
 
 exports.getEvents = catchAsyncError(async(req,res,next)=>{
-    const event = await Event.find({status:'Pending'});
-
+    const event = await Event.find({status:'Pending'}).populate({path:'comments',populate:{path:'userId',select:['name','avatar']}});
+    
     res.status(200).json({
         success:true,
         event

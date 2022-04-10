@@ -18,13 +18,16 @@ exports.registerUser = catchAsyncErrors(async(req,res,next)=>{
     //     crop:"scale"
     // })
 
-    const {name,email,password} = req.body;
+    const {name,email,password,avatar,instagram,facebook,twitter} = req.body;
     
     const user = await User.create({
         name,
         email,
         password,
-        avatar
+        avatar,
+        instagram,
+        facebook,
+        twitter,    
     })
     sendToken(user,200,res);
 })
@@ -124,10 +127,48 @@ exports.resetPassword = catchAsyncErrors(async(req,res,next)=>{
 
 // get currently logged in user details  => /api/v1/me
 exports.getUserProfile = catchAsyncErrors(async(req,res,next)=>{
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).populate('comments');
     res.status(200).json({
         success:true,
         user
+    })
+})
+
+exports.getUserProfileById = catchAsyncErrors(async(req,res,next)=>{
+    const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}});
+    const newUser = {
+        id:user._id,
+        name:user.name,
+        email:user.email,
+        avatar:user.avatar,
+        faculty:user.faculty,
+        instagram:user.instagram,
+        facebook:user.facebook,
+        twitter:user.twitter,
+        comments:user.comments
+    }
+    res.status(200).json({
+        success:true,
+        newUser
+    })
+})
+
+exports.getOthersProfileById = catchAsyncErrors(async(req,res,next)=>{
+    const user = await User.findById(req.params.id).populate({path:'comments',populate:{path:'eventId',select:['title']}});
+    const newUser = {
+        id:user._id,
+        name:user.name,
+        email:user.email,
+        avatar:user.avatar,
+        faculty:user.faculty,
+        instagram:user.instagram,
+        facebook:user.facebook,
+        twitter:user.twitter,
+        comments:user.comments
+    }
+    res.status(200).json({
+        success:true,
+        newUser
     })
 })
 
