@@ -21,11 +21,6 @@ export const menuAuthConfig = [
     path: '/',
   },
   {
-    title: 'Events',
-    icon: <Iconify icon={'eva:home-fill'} {...ICON_SIZE} />,
-    path: '/',
-  },
-  {
     title: 'Profile',
     icon: <Iconify icon={'eva:book-open-fill'} {...ICON_SIZE} />,
     path: PATH_PAGE.profile,
@@ -35,11 +30,6 @@ export const menuAuthConfig = [
 export const menuDefaultConfig = [
   {
     title: 'Home',
-    icon: <Iconify icon={'eva:home-fill'} {...ICON_SIZE} />,
-    path: '/',
-  },
-  {
-    title: 'Events',
     icon: <Iconify icon={'eva:home-fill'} {...ICON_SIZE} />,
     path: '/',
   },

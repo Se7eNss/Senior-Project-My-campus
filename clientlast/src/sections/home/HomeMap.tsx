@@ -112,6 +112,7 @@ const HomeMap = () => {
                         latitude={e.location.lat}
                         longitude={e.location.long}
                         onClick={() => setTooltip(e)}
+                        status={e.status}
                     />
                 ))}
                 {tooltip && (

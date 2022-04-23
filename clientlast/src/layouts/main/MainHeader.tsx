@@ -18,6 +18,8 @@ import MenuMobile from './MenuMobile';
 import { menuAuthConfig, menuDefaultConfig } from './MenuConfig';
 import useAuth from 'src/hooks/useAuth';
 import Iconify from 'src/components/Iconify';
+import { dispatch } from 'src/redux/store';
+import { setOpenEvents } from 'src/redux/slices/event';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +64,9 @@ export default function MainHeader() {
 
   const isHome = pathname === '/home';
 
+  const openEventsDialog = () => {
+    dispatch(setOpenEvents(true))
+  }
 
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent' }}>
@@ -88,6 +93,7 @@ export default function MainHeader() {
           {isAuth &&  isDesktop ? (
             <>
             <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={menuAuthConfig} /> 
+            <Button onClick={openEventsDialog}  sx={{fonstSize:"13px",mr:2,ml:-2}} >Events</Button>
             <Button color="error"  endIcon={<Iconify icon={'carbon:logout'}></Iconify>} sx={{fonstSize:"13px"}} onClick={logout}>Logout</Button>
             </>
           ):isAuth &&  !isDesktop ?(

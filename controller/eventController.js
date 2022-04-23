@@ -19,7 +19,7 @@ exports.newEvent = catchAsyncError(async(req,res,next)=>{
 //show all event => /api/v1/event
 
 exports.getEvents = catchAsyncError(async(req,res,next)=>{
-    const event = await Event.find({status:'Pending'}).populate({path:'comments',populate:{path:'userId',select:['name','avatar']}});
+    const event = await Event.find({$or:[{status:'Active'},{status:'Upcoming'}]}).populate({path:'comments',populate:{path:'userId',select:['name','avatar']}});
     
     res.status(200).json({
         success:true,

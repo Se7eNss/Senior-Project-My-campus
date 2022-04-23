@@ -1,6 +1,7 @@
 export type EventState = {
     isLoading: boolean;
     error: Error | string | null;
+    open: boolean;
     events: Eve[];
     event: Eve | null;
 }

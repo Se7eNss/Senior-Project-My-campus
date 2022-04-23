@@ -1,6 +1,7 @@
 // @mui
 import { styled } from '@mui/material/styles';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import EventsDialog from 'src/components/dialogs/EventsDialog';
 import { getEvents } from 'src/redux/slices/event';
 import { dispatch } from 'src/redux/store';
 import { ContactMap } from 'src/sections/contact';
@@ -35,6 +36,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function HomePage() {
+  const [openDialog, setOpenDialog] = useState(false)
   useEffect(() => {
     dispatch(getEvents())
   }, [])
@@ -42,6 +44,7 @@ export default function HomePage() {
     <Page title="Home">
       <RootStyle>
         <ContentStyle>
+          <EventsDialog/>
           <HomeMap/>
         </ContentStyle>
       </RootStyle>

@@ -11,6 +11,7 @@ import { dispatch } from '../store';
 const initialState:EventState = {
   isLoading: false,
   error: null,
+  open: false,
   events: [],
   event: null
 };
@@ -39,7 +40,9 @@ const initialState:EventState = {
       },
       createEventSuccess(state, action) {
         state.isLoading = false;
-        state.events = action.payload
+      },
+      setOpenEvents(state, action) {
+        state.open = action.payload;
       },
     },
   });
@@ -48,7 +51,9 @@ const initialState:EventState = {
   export default slice.reducer;
   
   // Actions
-  export const { } = slice.actions;
+  export const { 
+    setOpenEvents
+  } = slice.actions;
 
 
   // ----------------------------------------------------------------------

@@ -58,15 +58,17 @@ const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
                 }
             }
             await dispatch(createEvent(newData)).then(()=>{
-                if(error != ""){
+                if(error){
                     enqueueSnackbar('Something went wrong!',{variant:'error'});
                 }
                 else{
-                    enqueueSnackbar('Create success!');
+                    enqueueSnackbar('Your Request Sended, Admin will review it!',{variant:'success'});
+                    reset();
+                    setOpenDialog(false);
                 }
             })
-            reset();
-            setOpenDialog(false);
+            
+            
             
         } catch (error) {
             console.error(error);
@@ -81,7 +83,7 @@ const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle>Yeni Gider Ekle</DialogTitle>
+            <DialogTitle>Yeni Etkinlik Ekle</DialogTitle>
             <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                 <DialogContent sx={{ paddingBottom: '0px' }}>
                     <Grid container spacing={2}>
