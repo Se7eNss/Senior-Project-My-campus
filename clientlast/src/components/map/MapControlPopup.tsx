@@ -12,9 +12,10 @@ const PopupStyle = styled(Popup)(({ theme }) => {
       maxWidth: 180,
       width:170,
       padding:0,
+      color: theme.palette.text.secondary,
       boxShadow: theme.customShadows.z20,
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: theme.palette.grey[800],
+      backgroundColor: theme.palette.background.paper,
     },
     '& .mapboxgl-popup-close-button': {
       width: 24,

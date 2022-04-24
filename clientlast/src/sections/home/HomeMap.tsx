@@ -39,7 +39,7 @@ const RootStyle = styled('div')(({ theme }) => ({
     },
 }));
 
-type Tooltip = {
+export type Tooltip = {
     location: {
         lat: number,
         long: number
@@ -51,24 +51,23 @@ type Tooltip = {
     eventDate: string
 }
 
-const HomeMap = () => {
+type Props={
+    viewport: any,
+    setViewport: any
+    setTooltip: any,
+    tooltip: Tooltip
+}
+
+const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
     const { events } = useSelector(state => state.event)
     const { user } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const [location, setLocation] = useState(null);
-    const [tooltip, setTooltip] = useState<Tooltip | null>(null);
+   
     const [openDialog, setOpenDialog] = useState(false);
     const [alert, setAlert] = useState(false)
-    const [viewport, setViewport] = useState({
-        latitude: 41.215,
-        longitude: 32.653,
-        zoom: 16.41,
-        maxZoom: 18,
-        minZoom: 16,
-        pitch: 55,
-        bearing: 170,
-    });
+    
 
     useEffect(() => {
         if (viewport.longitude < 32.644340 || viewport.longitude > 32.663052 || viewport.latitude < 41.195887 || viewport.latitude > 41.217113) {
@@ -121,10 +120,10 @@ const HomeMap = () => {
                         latitude={tooltip?.location.lat}
                         onClose={() => setTooltip(null)}
                         sx={{
-                            '& .mapboxgl-popup-content': { bgcolor: 'common.white' },
+                            '& .mapboxgl-popup-content': { bgcolor:theme.palette.background.default },
                             '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': { borderTopColor: '#FFF' },
                             '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': { borderBottomColor: '#FFF' },
-                            zIndex: 4,
+                            zIndex:99,
                         }}
                     >
                         <Box sx={{ position: 'relative', height: '100%' }}>

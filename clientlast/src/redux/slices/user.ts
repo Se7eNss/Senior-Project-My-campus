@@ -72,8 +72,8 @@ export const getProfile = () => async (dispatch:any) => {
 export const getOthersProfile = (id:any) => async (dispatch:any) => {
     dispatch(profileSlice.actions.startLoading());
     try {
-        const { data } = await axios.get('/api/v1/profile/'+id);
-        dispatch(profileSlice.actions.getOtherProfileSuccess(data.newUser));
+        const { data,status } = await axios.get('/api/v1/profile/'+id);
+        status === 200 ? dispatch(profileSlice.actions.getOtherProfileSuccess(data.newUser)) : dispatch(profileSlice.actions.hasError(data));
     } catch (error) {
         dispatch(profileSlice.actions.hasError(error));
     }

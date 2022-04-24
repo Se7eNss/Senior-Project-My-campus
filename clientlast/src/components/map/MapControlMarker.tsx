@@ -1,6 +1,6 @@
 import { Marker, MarkerProps } from 'react-map-gl';
 import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ const IconStyle = styled('svg')(({ theme }) => ({
   height: SIZE,
   stroke: 'none',
   cursor: 'pointer',
-  transform: `translate(${-SIZE / 2}px,${-SIZE}px)`
+  transform: `translate(${-SIZE / 2}px,${-SIZE}px)`,
 }));
 
 // ----------------------------------------------------------------------

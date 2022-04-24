@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, Button } from '@mui/material'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { createEvent } from 'src/redux/slices/event';
 import { dispatch, useSelector } from 'src/redux/store';
 import * as Yup from 'yup';
@@ -7,31 +7,33 @@ import { useSnackbar } from 'notistack';
 import { FormProvider, RHFTextField, RHFUploadSingleFile } from '../hook-form'
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { LoadingButton } from '@mui/lab';
 
-type Props={
-    e:any,
-    open:boolean,
-    setOpenDialog:Function
+type Props = {
+    e: any,
+    open: boolean,
+    setOpenDialog: Function
 }
 
 
-const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
+const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
+    const [image, setImage] = useState<string | ArrayBuffer | null>()
     const { enqueueSnackbar } = useSnackbar();
-    const {error} = useSelector(state=>state.event)
+    const { error } = useSelector(state => state.event)
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
     const DialogSchema = Yup.object().shape({
         title: Yup.string().required('Title is required'),
         description: Yup.string().required('Description is required'),
-        image:Yup.string(),
+        eventImage: Yup.string().required('Image is required'),
         eventDate: Yup.date().required('Date is required')
     });
 
     const defaultValues = {
-        title: "" ,
+        title: "",
         description: "",
-        eventImage:"",
+        eventImage: "",
         eventDate: ""
     };
 
@@ -47,35 +49,53 @@ const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
         formState: { isSubmitting },
     } = methods;
 
-    const onSubmit = async (data:any) => {
+    const handleDrop = useCallback(
+        (acceptedFiles) => {
+            const file = acceptedFiles[0];
+            const reader = new FileReader();
+            reader.onload = (event: any) => {
+                if (file) {
+                    setValue(
+                        "eventImage",
+                        Object.assign(file, {
+                            preview: URL.createObjectURL(file),
+                        })
+                    );
+                    setImage(reader.result)
+                }
+            };
+            reader.readAsDataURL(file);
+        },
+        [setValue]
+    );
+
+    const onSubmit = async (data: any) => {
         try {
             await new Promise((resolve) => setTimeout(resolve, 500));
+            data.eventImage = image
             const newData = {
                 ...data,
-                location:{
-                    lat:e.lngLat[1],
-                    long:e.lngLat[0]
+                location: {
+                    lat: e.lngLat[1],
+                    long: e.lngLat[0]
                 }
             }
-            await dispatch(createEvent(newData)).then(()=>{
-                if(error){
-                    enqueueSnackbar('Something went wrong!',{variant:'error'});
+            await dispatch(createEvent(newData))
+                if (error) {
+                    enqueueSnackbar('Something went wrong!', { variant: 'error' });
                 }
-                else{
-                    enqueueSnackbar('Your Request Sended, Admin will review it!',{variant:'success'});
+                else {
+                    enqueueSnackbar('Your Request Sended, Admin will review it!', { variant: 'success' });
                     reset();
                     setOpenDialog(false);
                 }
-            })
-            
-            
-            
+
         } catch (error) {
             console.error(error);
         }
     };
-  return (
-    <Dialog
+    return (
+        <Dialog
             sx={{ '& .MuiDialog-paper': { width: '50%', maxHeight: 600 } }}
             maxWidth="md"
             open={open}
@@ -90,7 +110,13 @@ const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
                         <Grid item xs={12} md={12}>
                             <RHFTextField name="title" label="Title" sx={{ mb: 2 }} />
                             <RHFTextField name="description" label="Description" sx={{ mb: 2 }} />
-                            <RHFUploadSingleFile name="eventImage"  sx={{ mb: 2 }} />
+                            <RHFUploadSingleFile
+                                name="eventImage"
+                                accept="image/*"
+                                maxSize={3145728}
+                                onDrop={handleDrop}
+                            />
+
                             <RHFTextField type="date" name="eventDate" sx={{ mb: 2 }} />
                         </Grid>
                     </Grid>
@@ -98,13 +124,13 @@ const AddEventDialog = ({e,setOpenDialog,open}:Props) => {
                 </DialogContent>
                 <DialogActions>
                     <Button sx={{ width: '50%' }} size="small" variant="contained" color='error' onClick={handleCloseDialog}>İPTAL</Button>
-                    <Button variant="contained" size="small" sx={{ width: '50%', bgcolor: '#00AB55', '&:hover': { background: "#00AB55", }, }} type='submit' autoFocus>
+                    <LoadingButton variant="contained" size="small" sx={{ width: '50%', bgcolor: '#00AB55', '&:hover': { background: "#00AB55", }, }} type='submit' loading={isSubmitting} autoFocus>
                         KAYDET
-                    </Button>
+                    </LoadingButton>
                 </DialogActions>
             </FormProvider>
         </Dialog>
-  )
+    )
 }
 
 export default AddEventDialog

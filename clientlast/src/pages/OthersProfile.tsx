@@ -8,7 +8,7 @@ import { dispatch, useSelector } from 'src/redux/store';
 import { OProfileFollowInfo, OProfileAbout, OProfileSocialInfo, OProfilePostCard, OProfileCover } from 'src/sections/user/othersProfile';
 import ProfilePostInput from 'src/sections/user/profile/ProfilePostInput';
 import { _userAbout } from 'src/_mock';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 const RootStyle = styled('div')(({ theme }) => ({
     height: '100%',
@@ -21,14 +21,17 @@ const ContentStyle = styled('div')(({ theme }) => ({
 }));
 
 const OthersProfile = () => {
+    const navigate = useNavigate()
     const { id = '' } = useParams();
-    const {other,comments} = useSelector(state => state.profile);
+    const {other,comments,error} = useSelector(state => state.profile);
     useEffect(() => {
         dispatch(getOthersProfile(id))
     }, [])
     
     return (
-        <Page title="Home">
+        <>
+        {error && navigate('/404') } 
+        <Page title="Profile">
             <RootStyle>
                 <Container sx={{ mt: 10 }}>
                     <Card
@@ -60,6 +63,7 @@ const OthersProfile = () => {
                 </Container>
             </RootStyle>
         </Page>
+        </>
     )
 }
 

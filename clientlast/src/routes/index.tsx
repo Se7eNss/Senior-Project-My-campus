@@ -11,6 +11,7 @@ import AuthGuard from 'src/guards/AuthGuard';
 import Profile from 'src/pages/Profile';
 import useAuth from 'src/hooks/useAuth';
 import OthersProfile from 'src/pages/OthersProfile';
+import EventDetail from 'src/pages/EventDetail';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,15 @@ export default function Router() {
       children:[
         { path: 'profile', element:<Profile/> },
         { path: 'profile/:id', element:<OthersProfile/> },
+        { path: '*', element: <Navigate to="/404" replace /> },
+      ]
+    },
+    {
+      path:'/event',
+      element: <AuthGuard><MainLayout/></AuthGuard>  ,
+      children:[
+        { path: 'detail/:id', element:<EventDetail/> },
+        { path: '*', element: <Navigate to="/404" replace /> },
       ]
     },
     {

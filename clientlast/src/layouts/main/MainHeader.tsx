@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, Button, AppBar, Toolbar, Container, MenuItem } from '@mui/material';
@@ -52,6 +52,8 @@ const ToolbarShadowStyle = styled('div')(({ theme }) => ({
 export default function MainHeader() {
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
 
+  const navigate = useNavigate()
+
   const { user,logout } = useAuth()
 
   const isAuth = user ? true : false
@@ -65,6 +67,7 @@ export default function MainHeader() {
   const isHome = pathname === '/home';
 
   const openEventsDialog = () => {
+    navigate('/home');
     dispatch(setOpenEvents(true))
   }
 

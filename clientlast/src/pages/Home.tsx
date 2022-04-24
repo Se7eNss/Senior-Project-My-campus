@@ -5,7 +5,7 @@ import EventsDialog from 'src/components/dialogs/EventsDialog';
 import { getEvents } from 'src/redux/slices/event';
 import { dispatch } from 'src/redux/store';
 import { ContactMap } from 'src/sections/contact';
-import HomeMap from 'src/sections/home/HomeMap';
+import HomeMap, { Tooltip } from 'src/sections/home/HomeMap';
 // components
 import Page from '../components/Page';
 // sections
@@ -40,12 +40,22 @@ export default function HomePage() {
   useEffect(() => {
     dispatch(getEvents())
   }, [])
+  const [tooltip, setTooltip] = useState<any | null>(null);
+  const [viewport, setViewport] = useState({
+    latitude: 41.215,
+    longitude: 32.653,
+    zoom: 16.41,
+    maxZoom: 18,
+    minZoom: 16,
+    pitch: 55,
+    bearing: 170,
+});
   return (
     <Page title="Home">
       <RootStyle>
         <ContentStyle>
-          <EventsDialog/>
-          <HomeMap/>
+          <EventsDialog viewport={viewport} setViewport={setViewport}  tooltip={tooltip} setTooltip={setTooltip}/>
+          <HomeMap viewport={viewport} setViewport={setViewport} tooltip={tooltip} setTooltip={setTooltip} />
         </ContentStyle>
       </RootStyle>
     </Page>
