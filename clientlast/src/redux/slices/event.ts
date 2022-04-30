@@ -48,10 +48,21 @@ const initialState:EventState = {
       },
       createCommentSuccess(state, action) {
         state.isLoading = false;
+        state.event?.comments.push(action.payload)
+        
+      },
+      deleteEventSuccess (state, action) {
+        state.isLoading = false;
+        const index = state.events.map((event:any) => event._id).indexOf(action.payload);
+        state.events.splice(index, 1);
+      },
+      resetError (state) {
+        state.error = null
       },
       setOpenEvents(state, action) {
         state.open = action.payload;
       },
+      
     },
   });
   
@@ -60,6 +71,7 @@ const initialState:EventState = {
   
   // Actions
   export const { 
+    resetError,
     setOpenEvents
   } = slice.actions;
 
@@ -110,8 +122,8 @@ export function getEvents() {
       dispatch(slice.actions.startLoading());
       try {
         const response = await axios.post('/api/v1/comment',data);
-        if(response.status === 201) 
-        dispatch(slice.actions.createCommentSuccess(response.data.event));
+        if(response.status === 200) 
+        dispatch(slice.actions.createCommentSuccess(response.data.newComment));
         else
         dispatch(slice.actions.hasError(response.data));
       } catch (error) {
@@ -120,4 +132,18 @@ export function getEvents() {
     };
   }
 
+  export function deleteEvent(id:any) {
+    return async () => {
+      dispatch(slice.actions.startLoading());
+      try {
+        const response = await axios.delete('/api/v1/event/delete/' + id);
+        if(response.status === 200) 
+        dispatch(slice.actions.deleteEventSuccess(id));
+        else
+        dispatch(slice.actions.hasError(response.data));
+      } catch (error) {
+        dispatch(slice.actions.hasError(error));
+      }
+    };
+  }
 

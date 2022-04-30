@@ -47,6 +47,12 @@ const userSchema = new mongoose.Schema({
             ref:'Comment'
         }
     ],
+    events:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:'Event'
+        }
+    ],
     score:{
         type:Number,
         default:0

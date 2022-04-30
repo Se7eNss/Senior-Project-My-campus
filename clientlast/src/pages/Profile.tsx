@@ -1,10 +1,12 @@
 import { Card, Container, Grid, Stack, styled } from '@mui/material';
-import React, { useEffect } from 'react'
+import { Box } from '@mui/system';
+import React, { useEffect, useState } from 'react'
 import Page from 'src/components/Page'
 import useAuth from 'src/hooks/useAuth';
 import { getCommentsForUser, getProfile } from 'src/redux/slices/user';
 import { dispatch, useSelector } from 'src/redux/store';
-import { ProfileFollowInfo, ProfileAbout, ProfileSocialInfo, ProfilePostCard, ProfileCover } from 'src/sections/user/profile';
+import { ProfileFollowInfo, ProfileAbout, ProfileSocialInfo, ProfilePostCard, ProfileCover, ProfileEventInfo } from 'src/sections/user/profile';
+import ProfileEventCard from 'src/sections/user/profile/ProfileEventCard';
 import ProfilePostInput from 'src/sections/user/profile/ProfilePostInput';
 import { _userAbout } from 'src/_mock';
 
@@ -20,13 +22,13 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 const Profile = () => {
     const { user } = useAuth();
-    console.log(user)
-    const {profile,comments} = useSelector(state => state.profile);
+    const [active, setActive] = useState("joined")
+    const { profile, comments } = useSelector(state => state.profile);
     useEffect(() => {
         dispatch(getProfile())
         dispatch(getCommentsForUser(user?._id))
     }, [])
-    
+    console.log(active)
     return (
         <Page title="Home">
             <RootStyle>
@@ -43,18 +45,32 @@ const Profile = () => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={4}>
                             <Stack spacing={3}>
-                                <ProfileFollowInfo />
+                                <Box sx={{ cursor: "pointer" }} onClick={() => setActive("joined")}>
+                                    <ProfileFollowInfo active={active} />
+                                </Box>
+                                <Box sx={{ cursor: "pointer" }} onClick={() => setActive("created")}>
+                                    <ProfileEventInfo active={active} />
+                                </Box>
                                 <ProfileAbout />
                                 <ProfileSocialInfo />
                             </Stack>
                         </Grid>
 
                         <Grid item xs={12} md={8}>
-                            <Stack spacing={3}>
-                                {comments?.map((post:any) => (
-                                    <ProfilePostCard key={post.id} post={post} />
-                                ))}
-                            </Stack>
+                            {active === "joined" ? (
+                                <Stack spacing={3}>
+                                    {comments?.map((post: any,i:any) => (
+                                        <ProfilePostCard key={i} post={post} />
+                                    ))}
+                                </Stack>) : (
+                                <Stack spacing={3}>
+                                    {profile?.events?.map((eve,i:any) => (
+                                        <ProfileEventCard key={i} eve={eve} />
+                                    ))}
+                                    
+                                </Stack>
+                            )}
+
                         </Grid>
                     </Grid>
                 </Container>

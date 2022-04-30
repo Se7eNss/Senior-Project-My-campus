@@ -8,15 +8,15 @@ import { useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileFollowInfo() {
+export default function ProfileFollowInfo(active:any) {
   const {profile,comments} = useSelector(state => state.profile);
 
   return (
     <Card sx={{ py: 3 }}>
       <Stack direction="row" divider={<Divider orientation="vertical" flexItem />}>
         <Stack width={1} textAlign="center">
-          <Typography variant="h4">{comments?.length}</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          <Typography  color={active.active === "joined" ? "green" : "black"}  variant="h4">{comments?.length}</Typography>
+          <Typography  color={active.active === "joined" ? "green" : "text.secondary"}  variant="body2" >
             Events joined
           </Typography>
         </Stack>

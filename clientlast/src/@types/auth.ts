@@ -1,6 +1,8 @@
 
 // ----------------------------------------------------------------------
 
+import { Eve } from "./event";
+
 export type ActionMap<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
     ? {
@@ -50,6 +52,7 @@ type User = {
   instagram: string,
   email: string,
   comments: Comment[],
+  events: Eve[],
   id: string,
 }
 export type Comment = {

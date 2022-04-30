@@ -43,6 +43,11 @@ const profileSlice = createSlice({
             state.other = action.payload;
             state.isLoading = false;
         },
+        deleteCommentSuccess(state, action) {
+            state.isLoading = false;
+            const index = state.comments.map((comment:any) => comment._id).indexOf(action.payload);
+            state.comments.splice(index, 1);
+          },
 
         resetComments(state) {
             state.comments = [];
@@ -89,3 +94,19 @@ export const getCommentsForUser = (id:any) => async (dispatch:any) => {
         dispatch(profileSlice.actions.hasError(error));
     }
 }
+
+
+export function deleteComment(id:any) {
+    return async () => {
+      dispatch(profileSlice.actions.startLoading());
+      try {
+        const response = await axios.delete('/api/v1/comment/' + id);
+        if(response.status === 200) 
+        dispatch(profileSlice.actions.deleteCommentSuccess(id));
+        else
+        dispatch(profileSlice.actions.hasError(response.data));
+      } catch (error) {
+        dispatch(profileSlice.actions.hasError(error));
+      }
+    };
+  }

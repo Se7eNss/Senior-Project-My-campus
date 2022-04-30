@@ -18,7 +18,7 @@ export default function BlogPostCommentList({ event,page,before }: Props) {
 
 
   return (
-    <Grid container spacing={2} sx={{display:"flex", flexDirection:"row",justifyContent:"space-between"}}>
+    <Grid container spacing={2} sx={{display:"flex", flexDirection:"row",gap:3}}>
       {event?.comments.slice(before,page).map((comment:any) => {
         return (
           <Grid item md={3.8} key={comment?._id} sx={{width:1/2}}>

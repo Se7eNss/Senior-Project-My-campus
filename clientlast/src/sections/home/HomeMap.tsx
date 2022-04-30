@@ -16,7 +16,7 @@ import {
     MapControlGeolocate,
 } from '../../components/map';
 import { dispatch, useSelector } from 'src/redux/store';
-import { getEvents } from 'src/redux/slices/event';
+import { getEventDetail, getEvents } from 'src/redux/slices/event';
 import { Avatar, AvatarGroup, Badge, Box, Chip, Tooltip, Typography } from '@mui/material';
 import Image from 'src/components/Image';
 import AddEventDialog from 'src/components/dialogs/AddEventDialog';
@@ -24,6 +24,7 @@ import useAuth from 'src/hooks/useAuth';
 import { useSnackbar } from 'notistack';
 import AlertDialog from 'src/components/dialogs/AlertDialog';
 import { Comment } from 'src/@types/auth';
+import { useNavigate } from 'react-router';
 
 
 // ----------------------------------------------------------------------
@@ -40,6 +41,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 
 export type Tooltip = {
+    _id: string;
     location: {
         lat: number,
         long: number
@@ -48,7 +50,11 @@ export type Tooltip = {
     description: string,
     status: string,
     comments: Comment[],
-    eventDate: string
+    eventDate: string,
+    eventImage: {
+        url: string,
+        public_id: string
+    }
 }
 
 type Props={
@@ -61,6 +67,7 @@ type Props={
 const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
     const { events } = useSelector(state => state.event)
     const { user } = useAuth();
+    const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const [location, setLocation] = useState(null);
@@ -75,7 +82,11 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
         }
     }, [viewport])
 
-
+    const handleDetail = async (event: any) => {
+        await dispatch(getEventDetail(event))
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        navigate(`/event/detail/${event}`)
+    }
 
     useEffect(() => {
         dispatch(getEvents())
@@ -107,6 +118,7 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
                 <MapControlScale />
                 {events?.map((e: any, i: any) => (
                     <MapControlMarker
+                        e={e.title}
                         key={i}
                         latitude={e.location.lat}
                         longitude={e.location.long}
@@ -119,15 +131,17 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
                         longitude={tooltip?.location.long}
                         latitude={tooltip?.location.lat}
                         onClose={() => setTooltip(null)}
+                        onDoubleClick={()=>handleDetail(tooltip._id)}
                         sx={{
                             '& .mapboxgl-popup-content': { bgcolor:theme.palette.background.default },
                             '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': { borderTopColor: '#FFF' },
                             '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': { borderBottomColor: '#FFF' },
                             zIndex:99,
+                            cursor:'pointer'
                         }}
                     >
                         <Box sx={{ position: 'relative', height: '100%' }}>
-                            <Image src="https://minimal-assets-api.vercel.app/assets/images/members/member-2.jpg" ratio="1/1" sx={{ borderRadius: 1.5 }} />
+                            <Image src={tooltip.eventImage.url} ratio="1/1" sx={{ borderRadius: 1.5 }} />
                         </Box>
                         <Typography variant="subtitle2" sx={{ m: 0.5 }}>
                             {tooltip.title}
@@ -150,7 +164,7 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
                             </Tooltip>
                         </Box>
                         <Box p={1} display={'flex'} justifyContent={'center'} >
-                        <Chip label={tooltip.status} color={tooltip.status === "Active" ? 'success' : 'warning'} size="small" />
+                        <Chip  sx={{cursor:"pointer"}} label={tooltip.status} color={tooltip.status === "Active" ? 'success' : 'warning'} size="small" />
                         </Box>            
                         
                     </MapControlPopup>

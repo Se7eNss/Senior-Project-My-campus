@@ -135,7 +135,7 @@ exports.getUserProfile = catchAsyncErrors(async(req,res,next)=>{
 })
 
 exports.getUserProfileById = catchAsyncErrors(async(req,res,next)=>{
-    const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}});
+    const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}}).populate("events");
     const newUser = {
         id:user._id,
         name:user.name,
@@ -145,7 +145,8 @@ exports.getUserProfileById = catchAsyncErrors(async(req,res,next)=>{
         instagram:user.instagram,
         facebook:user.facebook,
         twitter:user.twitter,
-        comments:user.comments
+        comments:user.comments,
+        events:user.events.filter(event=>event.status !=='deleted')
     }
     res.status(200).json({
         success:true,

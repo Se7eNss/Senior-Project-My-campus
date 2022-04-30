@@ -6,8 +6,8 @@ const cookieParser =require('cookie-parser');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload')
 
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(cors())

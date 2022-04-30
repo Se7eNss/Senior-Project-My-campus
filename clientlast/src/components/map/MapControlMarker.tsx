@@ -1,6 +1,6 @@
 import { Marker, MarkerProps } from 'react-map-gl';
 import { styled } from '@mui/material/styles';
-import { Box, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -22,14 +22,17 @@ const IconStyle = styled('svg')(({ theme }) => ({
 interface MapControlMarkerProps extends MarkerProps {
   onClick?: React.MouseEventHandler<SVGSVGElement>;
   status?: string;
+  e?: any;
 }
 
-export default function MapControlMarker({ onClick, status ,...other }: MapControlMarkerProps) {
+export default function MapControlMarker({ onClick, e, status, ...other }: MapControlMarkerProps) {
   return (
-    <Marker {...other}>
-      <IconStyle fill={status === "Upcoming" ? "yellow" : status === "Active" ? "green" :"red"} viewBox="0 0 24 24" onClick={onClick}>
-        <path d={ICON} />
-      </IconStyle>
-    </Marker>
+      <Marker {...other}>
+        <Tooltip title={e} placement="bottom">
+        <IconStyle fill={status === "Upcoming" ? "yellow" : status === "Active" ? "green" : "red"} viewBox="0 0 24 24" onClick={onClick}>
+          <path d={ICON} />
+        </IconStyle>
+        </Tooltip>
+      </Marker>
   );
 }

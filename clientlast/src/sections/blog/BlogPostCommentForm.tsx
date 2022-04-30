@@ -59,7 +59,10 @@ export default function BlogPostCommentForm({id}:any) {
       data.image=image
       console.log(data)
       await dispatch(createComment(data));
-      if(error){
+      if(error === null){
+        enqueueSnackbar('Comment created successfully', {variant: 'success'})
+      }
+      else{
         enqueueSnackbar(error, {variant: 'error'})
       }
       reset();

@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, Button } from '@mui/material'
 import React, { useCallback, useState } from 'react'
-import { createEvent } from 'src/redux/slices/event';
+import { createEvent, resetError } from 'src/redux/slices/event';
 import { dispatch, useSelector } from 'src/redux/store';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
@@ -83,6 +83,7 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
             await dispatch(createEvent(newData))
                 if (error) {
                     enqueueSnackbar('Something went wrong!', { variant: 'error' });
+                    dispatch(resetError()) 
                 }
                 else {
                     enqueueSnackbar('Your Request Sended, Admin will review it!', { variant: 'success' });

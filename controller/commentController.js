@@ -5,21 +5,27 @@ const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/user');
 const Event = require('../models/event');
 const { update } = require('../models/comment');
-
+const cloudinary = require('cloudinary');
 
 //create new comment => /api/v1/:id/comment/new
 
 
 exports.newComment = catchAsyncError(async(req,res,next)=>{
     try {
-        const { eventId, image, comment} = req.body
+        const { eventId, image, comment,rate} = req.body
         const userId = req.user.id
+        const base64 = image.split(';base64,').pop();
+        const result = await cloudinary.v2.uploader.upload(image, {
+            folder: 'comments',
+            width: 350,
+            crop: "scale"
+        })
 
-        const event = await Event.findById(eventId).populate('event').populate('userId')
+        const event = await Event.findById(eventId)
         if(!event) return res.status(400).json({msg: "This post does not exist."})
 
         const newComment = new Comment({
-            user: req.user._id, image,  comment, userId, eventId
+             image:{public_id:result.public_id,url:result.secure_url},  comment, userId, eventId,rate
         })
 
         await Event.findOneAndUpdate({_id: eventId}, {
@@ -29,7 +35,7 @@ exports.newComment = catchAsyncError(async(req,res,next)=>{
         await User.findOneAndUpdate({_id: userId}, {
             $push: {comments: newComment._id}
         }, {new: true})
-
+        newComment.populate({path:'userId',select:['name','avatar']})
         await newComment.save()
 
         res.json({newComment})

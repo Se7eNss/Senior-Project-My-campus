@@ -22,7 +22,6 @@ const EventDetail = () => {
     const [before, setBefore] = useState(0)
     const { event } = useSelector(state => state.event)
     const { id = "" } = useParams()
-    console.log(before, page);
     useEffect(() => {
         dispatch(getEventDetail(id))
     }, [])
@@ -31,7 +30,6 @@ const EventDetail = () => {
         setPage(value*3)
         setBefore(value*3-3)
     }
-
     return (
         <Page title='Event Detail'>
             <RootStyle>
@@ -62,7 +60,7 @@ const EventDetail = () => {
                             <BlogPostCommentList event={event} page={page} before={before} />
 
                             <Box sx={{ mb: 5, mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                <Pagination onChange={handlePage} count={event?.comments ? event.comments.length % 3 > 0  ? parseInt(numeral(event?.comments.length / 3).format())+1 :event.comments.length / 3  : 0 } color="primary" />
+                                <Pagination onChange={handlePage} count={event?.comments&& event?.comments.length > 3  ? event.comments.length % 3 > 0  ? parseInt(numeral(event?.comments.length / 3).format())+1 :event.comments.length / 3  : 0 } color="primary" />
                             </Box>
 
                             <BlogPostCommentForm id={id}/>
