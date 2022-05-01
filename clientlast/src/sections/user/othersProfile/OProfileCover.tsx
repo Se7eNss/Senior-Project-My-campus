@@ -51,6 +51,7 @@ export default function OProfileCover() {
     <RootStyle>
       <InfoStyle>
         <MyAvatar
+          types={other?.avatar.url}
           sx={{
             mx: 'auto',
             borderWidth: 2,

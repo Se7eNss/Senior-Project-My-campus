@@ -1,4 +1,4 @@
-import { Card, CardHeader, Box, Typography, IconButton, Stack, Chip, Tooltip } from '@mui/material'
+import { Card, CardHeader, Box, Typography, IconButton, Stack, Chip, Tooltip, AvatarGroup, Avatar, Rating } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eve } from 'src/@types/event'
@@ -16,7 +16,7 @@ const ProfileEventCard = ({ eve }: any) => {
     const handleDelete = async () => {
         setOpenDialog(true)
     };
-
+    const rate = eve.comments.reduce((a: any, b: any) => a + b.rate, 0) / eve.comments.length
     const handleDetail = async () => {
         await dispatch(getEventDetail(eve._id))
         navigate(`/event/detail/${eve._id}`);
@@ -26,7 +26,7 @@ const ProfileEventCard = ({ eve }: any) => {
             <DeleteDialog open={openDialog} setOpen={setOpenDialog} post={eve} type="event" />
             <CardHeader
                 disableTypography
-                avatar={<MyAvatar />}
+                avatar={<MyAvatar types='me'/>}
                 title={
                     <Box sx={{ cursor: "pointer" }} onClick={handleDetail}>
                         <Typography variant="subtitle2" color="text.primary" >
@@ -43,12 +43,12 @@ const ProfileEventCard = ({ eve }: any) => {
                 }
                 action={
                     <>
-                    <Tooltip title={eve.status === "Active" ? " Active Now " :"Waiting For Admin Permission"}>
-                    <Chip label={eve.status} color={eve.status === "Active" ? 'success' : 'warning'} size="small" />
-                    </Tooltip>
-                    <IconButton onClick={handleDelete}>
-                        <Iconify color={"red"} icon={'fluent:delete-20-regular'} width={20} height={20} />
-                    </IconButton>
+                        <Tooltip title={eve.status === "Active" ? " Active Now " : "Waiting For Admin Permission"}>
+                            <Chip label={eve.status} color={eve.status === "Active" ? 'success' : 'warning'} size="small" />
+                        </Tooltip>
+                        <IconButton onClick={handleDelete}>
+                            <Iconify color={"red"} icon={'fluent:delete-20-regular'} width={20} height={20} />
+                        </IconButton>
                     </>
                 }
             />
@@ -57,12 +57,11 @@ const ProfileEventCard = ({ eve }: any) => {
                 <Typography>{eve.message}</Typography>
 
                 <Image alt="eve media" src={eve.eventImage ? eve.eventImage.url : `SS`} ratio="1/1" sx={{ borderRadius: 1 }} />
-                <Typography>{eve.description}</Typography>
-                {/* <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
-          {post.personLikes.map((person) => (
-            <Avatar key={person.name} alt={person.name} src={person.avatarUrl} />
-          ))}
-        </AvatarGroup> */}
+                <Typography variant='subtitle1'>{eve.description}</Typography>
+                <Box width={1} sx={{ display: 'flex', alignItems: 'center', justifyContent: "flex-end" }}>
+                    <Typography variant='caption'>{eve.comments.length}</Typography>
+                    <Rating precision={0.5} value={rate} readOnly size="small" />
+                </Box>
                 <Box sx={{ flexGrow: 1 }} />
             </Stack>
 

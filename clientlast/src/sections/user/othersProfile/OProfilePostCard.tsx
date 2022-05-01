@@ -44,7 +44,7 @@ export default function OProfilePostCard({ post }:any) {
     <Card>
       <CardHeader
         disableTypography
-        avatar={<MyAvatar />}
+        avatar={<MyAvatar types={other?.avatar.url}/>}
         title={
           <Link to="#" variant="subtitle2" color="text.primary" component={RouterLink}>
             {other?.name}

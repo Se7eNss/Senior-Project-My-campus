@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, Button, Box, Typography, useTheme, AvatarGroup, Avatar } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, Button, Box, Typography, useTheme, AvatarGroup, Avatar, Rating } from '@mui/material'
 import React from 'react'
 import { FormProvider } from 'react-hook-form'
 import { getEventDetail, setOpenEvents } from 'src/redux/slices/event'
@@ -62,10 +62,13 @@ const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
                     {events?.map((event: any) => (
                         <Box key={event._id} width={"100%"} display="flex" boxShadow={theme.shadows[8]}>
                             <Box width={1 / 3} p={2}>
-                                <Image ratio="6/4" src={event.image} />
+                                <Image ratio="6/4" src={event.eventImage.url} />
                             </Box>
                             <Box display={"flex"} flexDirection="column" justifyContent="space-between" width={2 / 3} p={2}>
+                                <Box display={"flex"} flexDirection="row" justifyContent="space-between" alignItems="center">
                                 <Typography variant="h6">{event.title}</Typography>
+                                <Rating   value={event.rate} readOnly size="small" />
+                                </Box>
                                 <Typography variant="body1">{event.description}</Typography>
                                 <Box alignSelf={"flex-end"} display="flex" gap="10px">
                                     <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>

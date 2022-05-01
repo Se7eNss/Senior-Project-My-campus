@@ -16,7 +16,8 @@ exports.newEvent = catchAsyncError(async (req, res, next) => {
         const user = req.user.id
         const result = await cloudinary.v2.uploader.upload(eventImage, {
             folder: 'events',
-            width: 350,
+            width: 650,
+            quality: 100,
             crop: "scale"
         })
         const newEvent = new Event({
@@ -40,8 +41,23 @@ exports.newEvent = catchAsyncError(async (req, res, next) => {
 //show all event => /api/v1/event
 
 exports.getEvents = catchAsyncError(async (req, res, next) => {
-    const event = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }] }).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } });
-
+    const data = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }] }).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } });
+    const event =data.map(e => {
+        return newEvents ={
+            _id: e._id,
+            title: e.title,
+            eventImage: e.eventImage,
+            eventDate: e.eventDate,
+            description: e.description,
+            location: e.location,
+            comments: e.comments,
+            user: e.user,
+            status: e.status,
+            rate: e.comments.reduce((acc, curr) => {
+                return acc + curr.rate
+            }, 0) / e.comments.length
+        }
+    })
     res.status(200).json({
         success: true,
         event
@@ -52,7 +68,7 @@ exports.getEvents = catchAsyncError(async (req, res, next) => {
 //event detail => /api/event/:id
 exports.eventDetail = catchAsyncError(async (req, res, next) => {
     const event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } }).populate({ path: 'user', select: ['name', 'avatar'] });
-
+   
     res.status(200).json({
         succes: true,
         event
@@ -110,12 +126,22 @@ exports.updateEvent = catchAsyncError(async (req, res, next) => {
 //delete event => /api/v1/event/delete/:id
 
 exports.deleteEvent = catchAsyncError(async (req, res, next) => {
-    let event = await Event.findById(req.params.id);
+    let event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar','_id'] } });
     if (!event) {
         return next(new ErrorHandler('Event not found', 404))
     }
-    event.status = 'deleted';
-    await event.save();
+
+    event.comments.forEach(async (comment) => {
+        await Comment.findByIdAndDelete(comment);
+    })
+    event.comments.forEach(async (comment) => {
+        await User.findByIdAndUpdate(comment.userId._id, {
+            $pull: { comments: comment }
+        })
+    })
+
+
+    await event.remove();
     res.status(200).json({
         success: true,
         message: 'Event deleted'

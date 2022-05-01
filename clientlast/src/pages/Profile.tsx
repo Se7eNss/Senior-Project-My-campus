@@ -27,7 +27,7 @@ const Profile = () => {
     useEffect(() => {
         dispatch(getProfile())
         dispatch(getCommentsForUser(user?._id))
-    }, [])
+    }, [active,])
     console.log(active)
     return (
         <Page title="Home">

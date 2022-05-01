@@ -17,7 +17,7 @@ import {
 } from '../../components/map';
 import { dispatch, useSelector } from 'src/redux/store';
 import { getEventDetail, getEvents } from 'src/redux/slices/event';
-import { Avatar, AvatarGroup, Badge, Box, Chip, Tooltip, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Badge, Box, Chip, Rating, Tooltip, Typography } from '@mui/material';
 import Image from 'src/components/Image';
 import AddEventDialog from 'src/components/dialogs/AddEventDialog';
 import useAuth from 'src/hooks/useAuth';
@@ -54,27 +54,28 @@ export type Tooltip = {
     eventImage: {
         url: string,
         public_id: string
-    }
+    },
+    rate: number,
 }
 
-type Props={
+type Props = {
     viewport: any,
     setViewport: any
     setTooltip: any,
     tooltip: Tooltip
 }
 
-const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
+const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
     const { events } = useSelector(state => state.event)
     const { user } = useAuth();
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const [location, setLocation] = useState(null);
-   
+
     const [openDialog, setOpenDialog] = useState(false);
     const [alert, setAlert] = useState(false)
-    
+
 
     useEffect(() => {
         if (viewport.longitude < 32.644340 || viewport.longitude > 32.663052 || viewport.latitude < 41.195887 || viewport.latitude > 41.217113) {
@@ -131,17 +132,17 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
                         longitude={tooltip?.location.long}
                         latitude={tooltip?.location.lat}
                         onClose={() => setTooltip(null)}
-                        onDoubleClick={()=>handleDetail(tooltip._id)}
+                        onDoubleClick={() => handleDetail(tooltip._id)}
                         sx={{
-                            '& .mapboxgl-popup-content': { bgcolor:theme.palette.background.default },
+                            '& .mapboxgl-popup-content': { bgcolor: theme.palette.background.default },
                             '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': { borderTopColor: '#FFF' },
                             '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': { borderBottomColor: '#FFF' },
-                            zIndex:99,
-                            cursor:'pointer'
+                            zIndex: 99,
+                            cursor: 'pointer'
                         }}
                     >
                         <Box sx={{ position: 'relative', height: '100%' }}>
-                            <Image src={tooltip.eventImage.url} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+                            <Image src={tooltip.eventImage.url} ratio="4/3" sx={{ borderRadius: 1.5 }} />
                         </Box>
                         <Typography variant="subtitle2" sx={{ m: 0.5 }}>
                             {tooltip.title}
@@ -157,16 +158,16 @@ const HomeMap = ({viewport,setViewport,setTooltip,tooltip}:Props) => {
                                     )
                                 ))}
                             </AvatarGroup>
-                            <Tooltip title="Start Date"  placement='right'>
-                            <Typography component="p" variant="caption" sx={{ m: 1, display: 'flex', alignItems: 'center' }}>
-                                {tooltip.eventDate.substring(0, 10)} 
-                            </Typography>
+                            <Tooltip title="Start Date" placement='right'>
+                                <Typography component="p" variant="caption" sx={{ m: 1, display: 'flex', alignItems: 'center' }}>
+                                    {tooltip.eventDate.substring(0, 10)}
+                                </Typography>
                             </Tooltip>
                         </Box>
-                        <Box p={1} display={'flex'} justifyContent={'center'} >
-                        <Chip  sx={{cursor:"pointer"}} label={tooltip.status} color={tooltip.status === "Active" ? 'success' : 'warning'} size="small" />
-                        </Box>            
-                        
+                        <Box p={1} display={'flex'} flexDirection="column" justifyContent={"center"} alignItems="center" gap={1}>
+                            <Rating precision={0.5} value={tooltip.rate} readOnly size="small" />
+                            <Chip sx={{ cursor: "pointer" }} label={tooltip.status} color={tooltip.status === "Active" ? 'success' : 'warning'} size="small" />
+                        </Box>
                     </MapControlPopup>
                 )}
             </MapGL>

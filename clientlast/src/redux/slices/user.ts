@@ -49,6 +49,14 @@ const profileSlice = createSlice({
             state.comments.splice(index, 1);
           },
 
+          deleteEventSuccess (state, action) {
+            state.isLoading = false;
+            if(state.profile) {
+            const index = state.profile?.events.map((event:any) => event._id).indexOf(action.payload);
+            state.profile?.events.splice(index, 1);
+            }
+          },
+
         resetComments(state) {
             state.comments = [];
         }
@@ -110,3 +118,19 @@ export function deleteComment(id:any) {
       }
     };
   }
+
+  export function deleteEvent(id:any) {
+    return async () => {
+      dispatch(profileSlice.actions.startLoading());
+      try {
+        const response = await axios.delete('/api/v1/event/delete/' + id);
+        if(response.status === 200) 
+        dispatch(profileSlice.actions.deleteEventSuccess(id));
+        else
+        dispatch(profileSlice.actions.hasError(response.data));
+      } catch (error) {
+        dispatch(profileSlice.actions.hasError(error));
+      }
+    };
+  }
+

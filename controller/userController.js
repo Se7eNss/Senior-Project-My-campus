@@ -12,19 +12,27 @@ const cloudinary = require('cloudinary');
 // register user api/v1/register
 
 exports.registerUser = catchAsyncErrors(async(req,res,next)=>{
-    // const result = await cloudinary.v2.uploader.upload(req.body.avatar,{
-    //     folder:'avatars',
-    //     width:150,
-    //     crop:"scale"
-    // })
+    const {firstName,lastName,email,password,avatar,instagram,facebook,twitter,faculty,phone} = req.body;
 
-    const {name,email,password,avatar,instagram,facebook,twitter} = req.body;
+    const result = await cloudinary.v2.uploader.upload(avatar, {
+        folder: 'comments',
+        width: 350,
+        width: 650,
+        quality: 100,
+        crop: "scale",
+    })
     
     const user = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
         password,
-        avatar,
+        faculty,
+        phone,
+        avatar:{
+            public_id:result.public_id,
+            url:result.secure_url
+        },
         instagram,
         facebook,
         twitter,    
@@ -135,7 +143,7 @@ exports.getUserProfile = catchAsyncErrors(async(req,res,next)=>{
 })
 
 exports.getUserProfileById = catchAsyncErrors(async(req,res,next)=>{
-    const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}}).populate("events");
+    const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}}).populate({path:'events',populate:{path:'comments'}});
     const newUser = {
         id:user._id,
         name:user.name,

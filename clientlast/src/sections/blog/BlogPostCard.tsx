@@ -55,8 +55,8 @@ export default function BlogPostCard({ comment }: Props) {
         />
         <Link to={`/user/profile/${comment.userId._id}`} color="inherit" component={RouterLink}>
           <Avatar
-            alt={comment.userId.name}
-            src={comment.userId.avatar.url}
+            alt={comment.userId?.name}
+            src={comment.userId?.avatar?.url}
             sx={{
               left: 24,
               zIndex: 9,

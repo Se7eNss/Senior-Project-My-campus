@@ -17,7 +17,8 @@ exports.newComment = catchAsyncError(async(req,res,next)=>{
         const base64 = image.split(';base64,').pop();
         const result = await cloudinary.v2.uploader.upload(image, {
             folder: 'comments',
-            width: 350,
+            width: 650,
+            quality: 100,
             crop: "scale"
         })
 

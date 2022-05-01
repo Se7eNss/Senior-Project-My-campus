@@ -7,12 +7,13 @@ import Avatar, { Props as AvatarProps } from './Avatar';
 
 // ----------------------------------------------------------------------
 
-export default function MyAvatar({ ...other }: AvatarProps) {
+export default function MyAvatar({ types , ...other }: AvatarProps) {
   const { user } = useAuth();
 
   return (
     <Avatar
-      src={user?.avatar.url}
+      types={types}
+      src={types==="me"? user?.avatar.url : types }
       alt={user?.avatar.public_id}
       color={user?.avatar.url ? 'default' : createAvatar(user?.displayName).color}
       {...other}

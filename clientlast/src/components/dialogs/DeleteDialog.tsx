@@ -1,8 +1,7 @@
 import { Dialog, DialogContent, Typography, DialogActions, Button } from '@mui/material'
 import { useSnackbar } from 'notistack';
 import React from 'react'
-import { deleteEvent } from 'src/redux/slices/event';
-import { deleteComment } from 'src/redux/slices/user';
+import { deleteComment, deleteEvent } from 'src/redux/slices/user';
 import { dispatch, useSelector } from 'src/redux/store';
 
 const DeleteDialog = ({ open, setOpen,post,type }:any) => {
@@ -47,7 +46,7 @@ const DeleteDialog = ({ open, setOpen,post,type }:any) => {
             aria-describedby="alert-dialog-description"
         >
             <DialogContent sx={{ paddingBottom: '0px',display:"flex" ,justifyContent:"center"  }}>
-                <Typography variant='h6' >Are you sure about delete your commnet?</Typography>
+                <Typography variant='h6' >Are you sure about delete your {type==="event" ? "event" : "comment"}? </Typography>
             </DialogContent>
             <DialogActions>
                 <Button onClick={deleteAction} variant="contained" size="small" sx={{ width: '50%', bgcolor: '#00AB55', '&:hover': { background: "#00AB55", }, }} autoFocus>

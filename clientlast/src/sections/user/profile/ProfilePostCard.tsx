@@ -16,6 +16,7 @@ import {
   AvatarGroup,
   InputAdornment,
   FormControlLabel,
+  Rating,
 } from '@mui/material';
 // @types
 import { UserPost } from '../../../@types/user';
@@ -66,7 +67,7 @@ export default function ProfilePostCard({ post }: any) {
       <DeleteDialog open={openDialog} setOpen={setOpenDialog} post={post} type="comment" />
       <CardHeader
         disableTypography
-        avatar={<MyAvatar />}
+        avatar={<MyAvatar types='me'/>}
         title={
           <Box sx={{cursor:"pointer"}} onClick={handleDetail}>
           <Typography   variant="subtitle2" color="text.primary" >
@@ -96,6 +97,9 @@ export default function ProfilePostCard({ post }: any) {
 
         <Image alt="post media" src={post.image ? post.image.url : `https://oguzhanse7en.com/dest/images/ozi1.jpg`} ratio="1/1" sx={{ borderRadius: 1 }} />
         <Typography>{post.comment}</Typography>
+        <Box width={1} sx={{ display: 'flex', alignItems: 'center',justifyContent:"flex-end" }}>
+            <Rating precision={0.5}  value={post.rate} readOnly size="small" />
+        </Box>
         {/* <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
             {post.personLikes.map((person) => (
               <Avatar key={person.name} alt={person.name} src={person.avatarUrl} />

@@ -138,16 +138,11 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   };
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
-    const response = await axios.post('/api/v1/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
-    const { accessToken, user } = response.data;
+  const register = async (data : any) => {
+    const response = await axios.post('/api/v1/register', data);
+    const { token, user } = response.data;
 
-    window.localStorage.setItem('accessToken', accessToken);
+    window.localStorage.setItem('accessToken', token);
     dispatch({
       type: Types.Register,
       payload: {

@@ -10,6 +10,7 @@ type AvatarColor = 'default' | 'primary' | 'secondary' | 'info' | 'success' | 'w
 
 export interface Props extends AvatarProps {
   color?: AvatarColor;
+  types: any;
 }
 
 const Avatar = forwardRef<HTMLDivElement, Props>(

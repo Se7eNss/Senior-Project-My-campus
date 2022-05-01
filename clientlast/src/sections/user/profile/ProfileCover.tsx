@@ -51,6 +51,7 @@ export default function ProfileCover() {
     <RootStyle>
       <InfoStyle>
         <MyAvatar
+        types='me'
           sx={{
             mx: 'auto',
             borderWidth: 2,

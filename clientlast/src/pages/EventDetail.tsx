@@ -27,8 +27,8 @@ const EventDetail = () => {
     }, [])
 
     const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value*3)
-        setBefore(value*3-3)
+        setPage(value * 3)
+        setBefore(value * 3 - 3)
     }
     return (
         <Page title='Event Detail'>
@@ -60,10 +60,13 @@ const EventDetail = () => {
                             <BlogPostCommentList event={event} page={page} before={before} />
 
                             <Box sx={{ mb: 5, mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                <Pagination onChange={handlePage} count={event?.comments&& event?.comments.length > 3  ? event.comments.length % 3 > 0  ? parseInt(numeral(event?.comments.length / 3).format())+1 :event.comments.length / 3  : 0 } color="primary" />
+                                <Pagination onChange={handlePage} count={event?.comments && event?.comments.length > 3 ? event.comments.length % 3 > 0 ? parseInt(numeral(event?.comments.length / 3).format()) + 1 : event.comments.length / 3 : 0} color="primary" />
                             </Box>
-
-                            <BlogPostCommentForm id={id}/>
+                            {event?.status === "deleted" ? <Typography variant="h6" sx={{ color: 'text.disabled' }}>
+                                Event is not active yet
+                            </Typography> : 
+                            <BlogPostCommentForm id={id} />
+                            }
                         </Box>
                     </Card>
                 </Container>

@@ -51,11 +51,6 @@ const initialState:EventState = {
         state.event?.comments.push(action.payload)
         
       },
-      deleteEventSuccess (state, action) {
-        state.isLoading = false;
-        const index = state.events.map((event:any) => event._id).indexOf(action.payload);
-        state.events.splice(index, 1);
-      },
       resetError (state) {
         state.error = null
       },
@@ -132,18 +127,4 @@ export function getEvents() {
     };
   }
 
-  export function deleteEvent(id:any) {
-    return async () => {
-      dispatch(slice.actions.startLoading());
-      try {
-        const response = await axios.delete('/api/v1/event/delete/' + id);
-        if(response.status === 200) 
-        dispatch(slice.actions.deleteEventSuccess(id));
-        else
-        dispatch(slice.actions.hasError(response.data));
-      } catch (error) {
-        dispatch(slice.actions.hasError(error));
-      }
-    };
-  }
 
