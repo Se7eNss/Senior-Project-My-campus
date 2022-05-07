@@ -12,6 +12,11 @@ import Profile from 'src/pages/Profile';
 import useAuth from 'src/hooks/useAuth';
 import OthersProfile from 'src/pages/OthersProfile';
 import EventDetail from 'src/pages/EventDetail';
+import RoleBasedGuard from 'src/guards/RoleBasedGuard';
+import AdminHome from 'src/pages/admin/AdminHome';
+import AdminEvents from 'src/pages/admin/AdminEvents';
+import AdminUsers from 'src/pages/admin/AdminUsers';
+import AdminComments from 'src/pages/admin/AdminComments';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +59,18 @@ export default function Router() {
         { path: 'reset-password', element: <ResetPassword /> },
         { path: 'verify', element: <VerifyCode /> },
       ],
+    },
+    {
+      path:'/admin',
+      element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout/></RoleBasedGuard>  ,
+      children:[
+        { element: <Navigate to="/admin/dashboard" replace />, index: true },
+        { path: 'dashboard', element:<AdminHome/> },
+        { path: 'users', element:<AdminUsers/> },
+        { path: 'events', element:<AdminEvents/> },
+        { path: 'comments', element:<AdminComments/> },
+        { path: '*', element: <Navigate to="/404" replace /> },
+      ]
     },
     {
       path:'/user',

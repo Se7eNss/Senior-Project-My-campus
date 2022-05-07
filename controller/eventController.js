@@ -11,8 +11,7 @@ const user = require('../models/user');
 exports.newEvent = catchAsyncError(async (req, res, next) => {
     req.body.user = req.user.id;
     try {
-        const { title, eventDate, eventImage, description, location } = req.body
-        console.log(eventDate, description, location)
+        const { title, eventDate, eventImage, description, location,eventEndDate,note } = req.body
         const user = req.user.id
         const result = await cloudinary.v2.uploader.upload(eventImage, {
             folder: 'events',
@@ -21,7 +20,7 @@ exports.newEvent = catchAsyncError(async (req, res, next) => {
             crop: "scale"
         })
         const newEvent = new Event({
-            title, eventImage: { public_id: result.public_id, url: result.secure_url }, user: user, eventDate: eventDate, description: description, location: location
+            title, eventImage: { public_id: result.public_id, url: result.secure_url }, user: user, eventDate: eventDate,eventEndDate:eventEndDate ,description: description, note:note,location: location
         })
 
         await User.findOneAndUpdate({ _id: user }, {
@@ -41,13 +40,14 @@ exports.newEvent = catchAsyncError(async (req, res, next) => {
 //show all event => /api/v1/event
 
 exports.getEvents = catchAsyncError(async (req, res, next) => {
-    const data = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }] }).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } });
+    const data = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }] }).populate({ path: 'comments', populate: { path: 'userId', select: ['firstName',"lastName", 'avatar'] } });
     const event =data.map(e => {
         return newEvents ={
             _id: e._id,
             title: e.title,
             eventImage: e.eventImage,
             eventDate: e.eventDate,
+            eventEndDate: e.eventEndDate,
             description: e.description,
             location: e.location,
             comments: e.comments,
@@ -67,7 +67,7 @@ exports.getEvents = catchAsyncError(async (req, res, next) => {
 
 //event detail => /api/event/:id
 exports.eventDetail = catchAsyncError(async (req, res, next) => {
-    const event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } }).populate({ path: 'user', select: ['name', 'avatar'] });
+    const event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } }).populate({ path: 'user', select: ['lastName',"firstName", 'avatar'] });
    
     res.status(200).json({
         succes: true,

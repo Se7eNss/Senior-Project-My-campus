@@ -40,12 +40,13 @@ export type ProfileState = {
   comments: Comment[];
 }
 
-type User = {
+export type User = {
   avatar: {
       public_id: string,
       url: string
   },
-  name: string,
+  firstName: string,
+  lastName: string,
   faculty: string,
   twitter: string,
   facebook: string,

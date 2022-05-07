@@ -15,10 +15,11 @@ app.use(cors())
 const user = require('./routes/user');
 const event = require('./routes/event');
 const comment = require('./routes/comment');
+const admin = require('./routes/admin');
 
 
 
-
+app.use('/api/v1',admin);
 app.use('/api/v1',user);
 app.use('/api/v1',event);
 app.use('/api/v1',comment);

@@ -23,6 +23,13 @@ const eventSchema = mongoose.Schema({
         type:Date,
         required:true
     },
+    eventEndDate:{
+        type:Date,
+        required:true
+    },
+    note:{
+        type:String,
+    },
     status:{
         type:String,
         default:'Pending',

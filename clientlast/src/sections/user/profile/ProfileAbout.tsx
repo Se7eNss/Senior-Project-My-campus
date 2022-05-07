@@ -26,7 +26,7 @@ export default function ProfileAbout() {
       <CardHeader title="About" />
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Typography variant="body2">{profile?.name}</Typography>
+        <Typography variant="body2">{profile?.firstName}</Typography>
 
         <Stack direction="row">
           <IconStyle icon={'eva:email-fill'} />

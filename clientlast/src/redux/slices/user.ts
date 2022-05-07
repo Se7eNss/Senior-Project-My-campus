@@ -38,6 +38,10 @@ const profileSlice = createSlice({
             state.comments = action.payload;
             state.isLoading = false;
         },
+        updateProfileSuccess(state, action) {
+            state.profile = action.payload;
+            state.isLoading = false;
+        },
         
         getOtherProfileSuccess(state, action) {
             state.other = action.payload;
@@ -76,6 +80,17 @@ export const getProfile = () => async (dispatch:any) => {
     try {
         const { data } = await axios.get('/api/v1/profile');
         dispatch(profileSlice.actions.getProfSuccess(data.newUser));
+    } catch (error) {
+        dispatch(profileSlice.actions.hasError(error));
+    }
+}
+
+//update profile
+export const updateProfile = (data:any) => async (dispatch:any) => {
+    dispatch(profileSlice.actions.startLoading());
+    try {
+        const response = await axios.put('/api/v1/me/update', data);
+        response.status === 200 ? dispatch(profileSlice.actions.updateProfileSuccess(response.data.user)) : dispatch(profileSlice.actions.hasError(response.data));
     } catch (error) {
         dispatch(profileSlice.actions.hasError(error));
     }

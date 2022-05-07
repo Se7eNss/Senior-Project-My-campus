@@ -51,6 +51,7 @@ export type Tooltip = {
     status: string,
     comments: Comment[],
     eventDate: string,
+    eventEndDate: string,
     eventImage: {
         url: string,
         public_id: string
@@ -91,7 +92,7 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
 
     useEffect(() => {
         dispatch(getEvents())
-    }, [openDialog])
+    }, [openDialog,dispatch])
 
     const handleDblClick = (e: any) => {
         if (user) {
@@ -148,7 +149,7 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
                             {tooltip.title}
                         </Typography>
                         <Typography component="p" variant="caption" sx={{ m: 0.5 }}>
-                            {tooltip.description}
+                            {tooltip.description.slice(0, 100)}...
                         </Typography>
                         <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                             <AvatarGroup max={2} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
@@ -160,7 +161,7 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
                             </AvatarGroup>
                             <Tooltip title="Start Date" placement='right'>
                                 <Typography component="p" variant="caption" sx={{ m: 1, display: 'flex', alignItems: 'center' }}>
-                                    {tooltip.eventDate.substring(0, 10)}
+                                    {tooltip.eventDate.substring(0, 10)+"--"+tooltip.eventEndDate?.substring(0, 10)}
                                 </Typography>
                             </Tooltip>
                         </Box>

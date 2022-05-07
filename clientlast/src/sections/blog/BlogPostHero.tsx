@@ -86,10 +86,10 @@ export default function BlogPostHero({ event }:any) {
       <TitleStyle>{event?.title}</TitleStyle>
       <FooterStyle>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={event?.user?.name} src={event?.user?.avatar.url} sx={{ width: 48, height: 48 }} />
+          <Avatar alt={event?.user?.firstName} src={event?.user?.avatar.url} sx={{ width: 48, height: 48 }} />
           <Box sx={{ ml: 2 }}>
             <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
-              {event?.user?.name}
+              {event?.user?.firstName}
             </Typography>
             <Typography variant="body2" sx={{ color: 'grey.500' }}>
                 {event?.eventDate.slice(0,10)}

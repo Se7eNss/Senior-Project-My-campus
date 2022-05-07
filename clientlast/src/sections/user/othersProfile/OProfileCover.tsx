@@ -69,7 +69,7 @@ export default function OProfileCover() {
             textAlign: { xs: 'center', md: 'left' },
           }}
         >
-          <Typography variant="h4">{other?.name}</Typography>
+          <Typography variant="h4">{other?.firstName}</Typography>
           <Typography sx={{ opacity: 0.72 }}>{other?.faculty}</Typography>
         </Box>
       </InfoStyle>

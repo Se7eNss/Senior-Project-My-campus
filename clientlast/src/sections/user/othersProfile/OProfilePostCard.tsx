@@ -47,7 +47,7 @@ export default function OProfilePostCard({ post }:any) {
         avatar={<MyAvatar types={other?.avatar.url}/>}
         title={
           <Link to="#" variant="subtitle2" color="text.primary" component={RouterLink}>
-            {other?.name}
+            {other?.firstName}
           </Link>
         }
         subheader={

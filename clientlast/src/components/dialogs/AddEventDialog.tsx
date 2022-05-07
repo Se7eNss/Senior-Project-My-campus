@@ -8,6 +8,7 @@ import { FormProvider, RHFTextField, RHFUploadSingleFile } from '../hook-form'
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
+import Label from '../Label';
 
 type Props = {
     e: any,
@@ -27,24 +28,37 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
         title: Yup.string().required('Title is required'),
         description: Yup.string().required('Description is required'),
         eventImage: Yup.string().required('Image is required'),
-        eventDate: Yup.date().required('Date is required')
+        eventDate: Yup.date().required('Date is required'),
+        eventEndDate: Yup.date().required('Date is required'),
+        note: Yup.string()
     });
 
+   
     const defaultValues = {
         title: "",
         description: "",
         eventImage: "",
-        eventDate: ""
+        eventDate: "",
+        eventEndDate: "",
+        note:"",
     };
 
     const methods = useForm({
         resolver: yupResolver(DialogSchema),
         defaultValues,
     });
+    const eventDate= methods.watch("eventDate");
+    
+    const minDate = new Date().toISOString().split("T")[0];
+
+    const minEndDate = eventDate ? new Date(eventDate) : new Date(minDate);
+    minEndDate.setDate(minEndDate.getDate() + 1)
+    const minEndDates = minEndDate.toISOString().split("T")[0]
 
     const {
         handleSubmit,
         setValue,
+        watch,
         reset,
         formState: { isSubmitting },
     } = methods;
@@ -80,6 +94,7 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
                     long: e.lngLat[0]
                 }
             }
+            dispatch(resetError()) 
             await dispatch(createEvent(newData))
                 if (error) {
                     enqueueSnackbar('Something went wrong!', { variant: 'error' });
@@ -110,15 +125,19 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={12}>
                             <RHFTextField name="title" label="Title" sx={{ mb: 2 }} />
-                            <RHFTextField name="description" label="Description" sx={{ mb: 2 }} />
+                            <RHFTextField name="description" multiline rows={3} label="Description" sx={{ mb: 2 }} />
                             <RHFUploadSingleFile
+                                sx={{ mb: 2 }}
                                 name="eventImage"
                                 accept="image/*"
                                 maxSize={3145728}
                                 onDrop={handleDrop}
                             />
-
-                            <RHFTextField type="date" name="eventDate" sx={{ mb: 2 }} />
+                            <Label>Start Date</Label>
+                            <RHFTextField InputProps={{inputProps: { min:minDate} }} type="date" name="eventDate" sx={{ mb: 2 }} />
+                            <Label>Finish Date</Label>
+                            <RHFTextField InputProps={{inputProps: { min:minEndDates} }} type="date" name="eventEndDate" sx={{ mb: 2 }} />
+                            <RHFTextField name="note" label="Add Some Note for Admin" sx={{ mb: 2 }} />
                         </Grid>
                     </Grid>
 

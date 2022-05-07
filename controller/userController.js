@@ -15,7 +15,7 @@ exports.registerUser = catchAsyncErrors(async(req,res,next)=>{
     const {firstName,lastName,email,password,avatar,instagram,facebook,twitter,faculty,phone} = req.body;
 
     const result = await cloudinary.v2.uploader.upload(avatar, {
-        folder: 'comments',
+        folder: 'avatars',
         width: 350,
         width: 650,
         quality: 100,
@@ -50,6 +50,10 @@ exports.loginUser = catchAsyncErrors(async(req,res,next)=>{
     }
     //finding user in db
     const userd = await User.findOne({email}).select('+password');
+    
+    if(userd.status === true){
+        return   next(new ErrorHandler('You banned, Contact with admin.',401))
+    }
 
     if(!userd){
         return   next(new ErrorHandler('Invalid Email or Password',401))
@@ -146,7 +150,8 @@ exports.getUserProfileById = catchAsyncErrors(async(req,res,next)=>{
     const user = await User.findById(req.user.id).populate({path:'comments',populate:{path:'eventId'}}).populate({path:'events',populate:{path:'comments'}});
     const newUser = {
         id:user._id,
-        name:user.name,
+        firstName:user.firstName,
+        lastName:user.lastName,
         email:user.email,
         avatar:user.avatar,
         faculty:user.faculty,
@@ -166,7 +171,8 @@ exports.getOthersProfileById = catchAsyncErrors(async(req,res,next)=>{
     const user = await User.findById(req.params.id).populate({path:'comments',populate:{path:'eventId',select:['title']}});
     const newUser = {
         id:user._id,
-        name:user.name,
+        firstName:user.firstName,
+        lastName:user.lastName,
         email:user.email,
         avatar:user.avatar,
         faculty:user.faculty,
@@ -202,21 +208,58 @@ exports.updatePassword = catchAsyncErrors(async (req,res,next)=>{
 
 //Update user profile => /api/v1/me/update
 exports.updateProfile = catchAsyncErrors(async (req,res,next)=>{
-    const newUserData = {
-        name:req.body.name,
-        email:req.body.email
+    const {firstName,lastName,avatar,faculty,email,phone,instagram,facebook,twitter,id} =req.body;
+    let newUserData={};
+    let user ={};
+    if(avatar){
+        
+        const result = await cloudinary.v2.uploader.upload(avatar, {
+            folder: 'avatars',
+            width: 350,
+            width: 650,
+            quality: 100,
+            crop: "scale",
+        })
+        console.log(result)
+        newUserData = {
+            firstName:firstName,
+            lastName:lastName,
+            avatar:{
+                public_id:result.public_id,
+                url:result.secure_url
+            },
+            faculty:faculty,
+            email:email,
+            phone:phone,
+            instagram:instagram,
+            facebook:facebook,
+            twitter:twitter
+        }
+        console.log(newUserData)
+    }
+    else{
+        newUserData = {
+            firstName:firstName,
+            lastName:lastName,
+            faculty:faculty,
+            email:email,
+            phone:phone,
+            instagram:instagram,
+            facebook:facebook,
+            twitter:twitter
+        }
     }
 
-    //avatar: todo
-
-    const user = await User.findByIdAndUpdate(req.user.id, newUserData ,{
+    user = await User.findByIdAndUpdate(id, newUserData ,{
         new:true,
         runValidators:true,
         useFindAndModify:false
-    })
+    }).populate('comments').populate({path:'events',populate:{path:'comments'}});
+
 
     res.status(200).json({
-        success: true
+        success: true,
+        user
     })
 
 })

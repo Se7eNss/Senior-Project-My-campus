@@ -26,7 +26,7 @@ export default function OProfileAbout() {
       <CardHeader title="About" />
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Typography variant="body2">{other?.name}</Typography>
+        <Typography variant="body2">{other?.firstName}</Typography>
 
         <Stack direction="row">
           <IconStyle icon={'eva:email-fill'} />

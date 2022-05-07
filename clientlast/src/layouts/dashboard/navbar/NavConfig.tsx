@@ -9,38 +9,26 @@ const getIcon = (name: string) => (
 
 const ICONS = {
   user: getIcon('ic_user'),
-  ecommerce: getIcon('ic_ecommerce'),
+  booking: getIcon('ic_booking'),
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
+  chat: getIcon('ic_chat'),
 };
 
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general v3.0.0',
+    subheader: 'My Campus',
     items: [
-      { title: 'One', path: '/dashboard/one', icon: ICONS.dashboard },
-      { title: 'Two', path: '/dashboard/two', icon: ICONS.ecommerce },
-      { title: 'Three', path: '/dashboard/three', icon: ICONS.analytics },
-    ],
-  },
-
-  // MANAGEMENT
-  // ----------------------------------------------------------------------
-  {
-    subheader: 'management',
-    items: [
+      { title: 'dashboard', path: '/admin/dashboard', icon: ICONS.dashboard },
       {
-        title: 'user',
-        path: '/dashboard/user',
+        title: 'Users',
+        path: '/admin/users',
         icon: ICONS.user,
-        children: [
-          { title: 'Four', path: '/dashboard/user/four' },
-          { title: 'Five', path: '/dashboard/user/five' },
-          { title: 'Six', path: '/dashboard/user/six' },
-        ],
       },
+      { title: 'Events', path: '/admin/events', icon: ICONS.booking },
+      { title: 'Comments', path: '/admin/comments', icon: ICONS.chat },
     ],
   },
 ];
