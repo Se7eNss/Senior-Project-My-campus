@@ -61,18 +61,6 @@ export default function Router() {
       ],
     },
     {
-      path:'/admin',
-      element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout/></RoleBasedGuard>  ,
-      children:[
-        { element: <Navigate to="/admin/dashboard" replace />, index: true },
-        { path: 'dashboard', element:<AdminHome/> },
-        { path: 'users', element:<AdminUsers/> },
-        { path: 'events', element:<AdminEvents/> },
-        { path: 'comments', element:<AdminComments/> },
-        { path: '*', element: <Navigate to="/404" replace /> },
-      ]
-    },
-    {
       path:'/user',
       element: <AuthGuard><MainLayout/></AuthGuard>  ,
       children:[
@@ -98,7 +86,17 @@ export default function Router() {
         { path: '*', element: <Navigate to="/404" replace /> },
       ],
     },
-    
+    {
+      path:'/admin',
+      element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout/></RoleBasedGuard>  ,
+      children:[
+        { path: 'dashboard', element:<AdminHome/> },
+        { path: 'users', element:<AdminUsers/> },
+        { path: 'events', element:<AdminEvents/> },
+        { path: 'comments', element:<AdminComments/> },
+        { path: '*', element: <Navigate to="/404" replace /> },
+      ]
+    },
     {
       path: '*',
       element: <LogoOnlyLayout />,

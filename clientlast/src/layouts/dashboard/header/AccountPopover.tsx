@@ -6,20 +6,20 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar } from '@mui/material
 import MenuPopover from '../../../components/MenuPopover';
 import { IconButtonAnimate } from '../../../components/animate';
 import useAuth from 'src/hooks/useAuth';
+import { Link as RouterLink, useNavigate} from 'react-router-dom';
+import useIsMountedRef from 'src/hooks/useIsMountedRef';
+import { useSnackbar } from 'notistack';
+import { PATH_AUTH } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
     label: 'Home',
-    linkTo: '/',
+    linkTo: '/admin/dashboard',
   },
   {
-    label: 'Profile',
-    linkTo: '/',
-  },
-  {
-    label: 'Settings',
+    label: 'Go App',
     linkTo: '/',
   },
 ];
@@ -28,9 +28,30 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState<HTMLElement | null>(null);
-  const {user} = useAuth();
+  const navigate = useNavigate();
+
+  const { user, logout } = useAuth();
+
+  const isMountedRef = useIsMountedRef();
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setOpen(event.currentTarget);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate(PATH_AUTH.login, { replace: true });
+
+      if (isMountedRef.current) {
+        handleClose();
+      }
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar("Unable to logout!", { variant: 'error' });
+    }
   };
 
   const handleClose = () => {
@@ -78,7 +99,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.firstName+" "+user?.lastName}
+            {user?.firstName + " " + user?.lastName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {user?.email}
@@ -89,7 +110,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem component={RouterLink} to={option.linkTo} key={option.label} onClick={handleClose}>
               {option.label}
             </MenuItem>
           ))}
@@ -97,7 +118,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem sx={{ m: 1 }}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>Logout</MenuItem>
       </MenuPopover>
     </>
   );

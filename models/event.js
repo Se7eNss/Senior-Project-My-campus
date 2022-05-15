@@ -58,6 +58,10 @@ const eventSchema = mongoose.Schema({
             type:String,
         }
     },
+    seenByAdmin:{
+        type:Boolean,
+        default:false
+    },
     createdAt:{
         type:Date,
         default:Date.now

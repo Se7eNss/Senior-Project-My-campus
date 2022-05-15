@@ -1,5 +1,6 @@
 import { noCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import {
   Box,
@@ -24,17 +25,43 @@ import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 import MenuPopover from '../../../components/MenuPopover';
 import { IconButtonAnimate } from '../../../components/animate';
+import axios from 'src/utils/axios';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState(_notifications);
+  const [notifications, setNotifications] = useState([]);
+  const totalUnRead = notifications?.filter((item:any) => item.seenByAdmin === false).length;
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState<HTMLElement | null>(null);
 
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+  useEffect(() => {
+    (async () => {
+      try {
+        
+        const response = await axios.get(`/api/v1/admin/events/unseen`);
+
+        if (response.status === 200) {
+          const eventss = response.data.events.map((event:any) => {
+            return {
+              ...event,
+            }
+          }
+          )
+          setNotifications(eventss)
+        } else {
+          enqueueSnackbar('Error', { variant: 'error' });
+        }
+      } catch (error) {
+        
+      }
+    })();
+  }, [])
+
+  const handleOpen = async (event: React.MouseEvent<HTMLElement>) => {
     setOpen(event.currentTarget);
   };
 
@@ -42,14 +69,14 @@ export default function NotificationsPopover() {
     setOpen(null);
   };
 
-  const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false,
-      }))
-    );
-  };
+  // const handleMarkAllAsRead = () => {
+  //   setNotifications(
+  //     notifications.map((notification) => ({
+  //       ...notification,
+  //       isUnRead: false,
+  //     }))
+  //   );
+  // };
 
   return (
     <>
@@ -69,60 +96,35 @@ export default function NotificationsPopover() {
         onClose={handleClose}
         sx={{ width: 360, p: 0, mt: 1.5, ml: 0.75 }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
-            </Typography>
-          </Box>
-
-          {totalUnRead > 0 && (
-            <Tooltip title=" Mark all as read">
-              <IconButtonAnimate color="primary" onClick={handleMarkAllAsRead}>
-                <Iconify icon="eva:done-all-fill" width={20} height={20} />
-              </IconButtonAnimate>
-            </Tooltip>
-          )}
-        </Box>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
+      {
+        notifications.length > 0 ?
+        <>
         <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
           <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                New Events
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+            {notifications.map((notification:any,i:any) => (
+              <NotificationItem key={i} notification={notification} />
             ))}
+
+          
           </List>
 
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
         </Scrollbar>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            View All
-          </Button>
+        </> :
+        <Box sx={{ p: 2.5, textAlign: 'center' }}>
+          <Typography variant="body2">No new events</Typography>
         </Box>
+      }
+ 
+
       </MenuPopover>
     </>
   );
@@ -137,28 +139,28 @@ type NotificationItemProps = {
   avatar: string | null;
   type: string;
   createdAt: Date;
-  isUnRead: boolean;
+  seenByAdmin: boolean;
 };
 
-function NotificationItem({ notification }: { notification: NotificationItemProps }) {
-  const { avatar, title } = renderContent(notification);
-
+function NotificationItem({ notification }:any) {
   return (
     <ListItemButton
+      component={RouterLink}
+      to={`/admin/events`}
       sx={{
         py: 1.5,
         px: 2.5,
         mt: '1px',
-        ...(notification.isUnRead && {
+        ...(notification.seenByAdmin && {
           bgcolor: 'action.selected',
         }),
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+        <Avatar src={notification.user.avatar?.url} sx={{ bgcolor: 'background.neutral' }}></Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={title}
+        primary={notification.title}
         secondary={
           <Typography
             variant="caption"

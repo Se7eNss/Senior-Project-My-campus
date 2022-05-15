@@ -1,6 +1,8 @@
 import { IconButton, MenuItem, Divider } from '@mui/material'
+import { useSnackbar } from 'notistack'
 import React, { useState } from 'react'
 import { ICON } from 'src/config'
+import axios from 'src/utils/axios'
 import Iconify from '../Iconify'
 import MenuPopover from '../MenuPopover'
 import AdminDeleteDialog from './AdminDeleteDialog'
@@ -11,11 +13,23 @@ const AdminMoreMenu = ({ params, types }: any) => {
     const [open, setOpen] = useState<HTMLElement | null>(null);
     const [openMap, setOpenMap] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
-    const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpen = async(event: React.MouseEvent<HTMLElement>) => {
         setOpen(event.currentTarget);
+        const response = await axios.put(`/api/v1/admin/events/seen/${params.id}`);
+        if (response.status === 200) {
+            console.log(response.data)
+        } else {
+            enqueueSnackbar('Error', { variant: 'error' });
+        }
+    
     };
-    console.log(types)
+    
+
+    const handleOpenMap = () => {
+            setOpenMap(true);
+    }
 
     const ICON = {
         mr: 1,
@@ -57,7 +71,7 @@ const AdminMoreMenu = ({ params, types }: any) => {
                 {types === "event" &&
                     <>
                         <Divider sx={{ borderStyle: 'dashed' }} />
-                        <MenuItem onClick={() => setOpenMap(true)}>
+                        <MenuItem onClick={handleOpenMap}>
                             <Iconify icon={'bxs:map-pin'} sx={{ ...ICON }} />
                             Show Location
                         </MenuItem>

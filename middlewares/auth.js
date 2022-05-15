@@ -14,8 +14,14 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req,res,next)=>{
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.user = await  User.findById(decoded.id);
+        if(req.user.status === true){
+            return next(new ErrorHandler('You banned, Contact with Admin !!',401))
+        }
+        else{
+            next()
+        }
 
-        next()
+        
 })
 
 exports.authorizeRoles = (...roles) =>{

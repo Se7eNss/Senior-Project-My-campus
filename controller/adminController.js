@@ -47,6 +47,67 @@ exports.changeEventStatus = catchAsyncError(async(req,res,next)=>{
 }
 )
 
+exports.eventSeenByAdmin = catchAsyncError(async(req,res,next)=>{
+    try {
+        const events = await Event.findOneAndUpdate({_id:req.params.id},{seenByAdmin:true},{new:true});
+        res.json({events})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+exports.getUnseenEvents = catchAsyncError(async(req,res,next)=>{
+    try {
+        const events = await Event.find({seenByAdmin:false}).populate({path:'user',select: ['firstName',"lastName","avatar"]});
+        res.json({events})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
+exports.getMostCommentedEvents = catchAsyncError(async(req,res,next)=>{
+    try {
+        const events = await Event.find().sort({comments: -1}).limit(5).populate({path:'user',select: ['firstName',"lastName","avatar"]});
+        res.json({events})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
+
+//get users grouped by created month 
+exports.getUsersGroupedByCreatedDates = catchAsyncError(async(req,res,next)=>{
+    try {
+        const users = await User.aggregate([
+            {$group: {
+                _id: {$month: "$createdAt"},
+                count: {$sum: 1}
+            }},
+            {$sort: {_id: 1}}
+        ]);
+        const events = await Event.aggregate([
+            {$group: {
+                _id: {$month: "$createdAt"},
+                count: {$sum: 1}
+            }},
+            {$sort: {_id: 1}}
+        ]);
+        const comments = await Comment.aggregate([
+            {$group: {
+                _id: {$month: "$createdAt"},
+                count: {$sum: 1}
+            }},
+            {$sort: {_id: 1}}
+        ]);
+        res.json({users,events,comments})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
 exports.deleteEvent = catchAsyncError(async(req,res,next)=>{
     try {
         const events = await Event.findOneAndDelete({_id:req.params.id});
