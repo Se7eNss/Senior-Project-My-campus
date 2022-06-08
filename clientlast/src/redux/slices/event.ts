@@ -10,7 +10,7 @@ import { dispatch } from '../store';
 
 const initialState:EventState = {
   isLoading: false,
-  error: null,
+  error: "Pending",
   open: false,
   events: [],
   event: null
@@ -54,6 +54,9 @@ const initialState:EventState = {
       resetError (state) {
         state.error = null
       },
+      resetErrorComment (state) {
+        state.error = "Pending"
+      },
       setOpenEvents(state, action) {
         state.open = action.payload;
       },
@@ -67,6 +70,7 @@ const initialState:EventState = {
   // Actions
   export const { 
     resetError,
+    resetErrorComment,
     setOpenEvents
   } = slice.actions;
 
@@ -97,15 +101,27 @@ export function getEvents() {
     };
   }
 
+  export function updateEvent(data:any){
+    return async () => {
+      dispatch(slice.actions.startLoading());
+      try {
+        const response = await axios.put('/api/v1/event/'+data.id,data);
+        response.status === 200 ? dispatch(slice.actions.createEventSuccess(response.data.event)) : dispatch(slice.actions.hasError(response.data));
+      } catch (error) {
+        dispatch(slice.actions.hasError(error));
+      }
+    };
+  }
+
   export function createEvent(data:any) {
     return async () => {
       dispatch(slice.actions.startLoading());
       try {
         const response = await axios.post('/api/v1/event/new',data);
-        if(response.status === 201) 
+        if(response.status === 200) 
         dispatch(slice.actions.createEventSuccess(response.data.event));
         else
-        dispatch(slice.actions.hasError(response.data));
+        dispatch(slice.actions.hasError(response.data.error));
       } catch (error) {
         dispatch(slice.actions.hasError(error));
       }

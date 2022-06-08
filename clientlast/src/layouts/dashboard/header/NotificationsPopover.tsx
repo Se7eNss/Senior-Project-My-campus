@@ -59,7 +59,7 @@ export default function NotificationsPopover() {
         
       }
     })();
-  }, [])
+  }, [open, ])
 
   const handleOpen = async (event: React.MouseEvent<HTMLElement>) => {
     setOpen(event.currentTarget);

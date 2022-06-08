@@ -90,6 +90,7 @@ export default function Router() {
       path:'/admin',
       element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout/></RoleBasedGuard>  ,
       children:[
+        { element: <Navigate to="dashboard" replace />, index: true },
         { path: 'dashboard', element:<AdminHome/> },
         { path: 'users', element:<AdminUsers/> },
         { path: 'events', element:<AdminEvents/> },
@@ -119,10 +120,3 @@ const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 
 // Main
 const HomePage = Loadable(lazy(() => import('../pages/Home')));
-const About = Loadable(lazy(() => import('../pages/About')));
-const Faqs = Loadable(lazy(() => import('../pages/Faqs')));
-const ComingSoon = Loadable(lazy(() => import('../pages/ComingSoon')));
-const Maintenance = Loadable(lazy(() => import('../pages/Maintenance')));
-const Pricing = Loadable(lazy(() => import('../pages/Pricing')));
-const Payment = Loadable(lazy(() => import('../pages/Payment')));
-const Page500 = Loadable(lazy(() => import('../pages/Page500')));

@@ -1,6 +1,6 @@
 // @mui
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Avatar, SpeedDial, Typography, SpeedDialAction } from '@mui/material';
+import { Box, Avatar, SpeedDial, Typography, SpeedDialAction, IconButton, useTheme } from '@mui/material';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // utils
@@ -9,27 +9,16 @@ import { fDate } from '../../utils/formatTime';
 // components
 import Image from '../../components/Image';
 import Iconify from '../../components/Iconify';
+import { FacebookShareButton, TwitterShareButton, TelegramShareButton, InstapaperShareButton, LinkedinShareButton, } from 'react-share';
+import useAuth from 'src/hooks/useAuth';
+import { useEffect, useState } from 'react';
+import EditEventDialog from 'src/components/dialogs/EditEventDialog';
+import { dispatch } from 'src/redux/store';
+import { getEventDetail } from 'src/redux/slices/event';
 
 // ----------------------------------------------------------------------
 
-const SOCIALS = [
-  {
-    name: 'Facebook',
-    icon: <Iconify icon="eva:facebook-fill" width={20} height={20} color="#1877F2" />,
-  },
-  {
-    name: 'Instagram',
-    icon: <Iconify icon="ant-design:instagram-filled" width={20} height={20} color="#D7336D" />,
-  },
-  {
-    name: 'Linkedin',
-    icon: <Iconify icon="eva:linkedin-fill" width={20} height={20} color="#006097" />,
-  },
-  {
-    name: 'Twitter',
-    icon: <Iconify icon="eva:twitter-fill" width={20} height={20} color="#1C9CEA" />,
-  },
-];
+
 
 const OverlayStyle = styled('h1')(({ theme }) => ({
   top: 0,
@@ -78,11 +67,33 @@ const FooterStyle = styled('div')(({ theme }) => ({
 
 
 
-export default function BlogPostHero({ event }:any) {
+export default function BlogPostHero({ event }: any) {
+  const url = window.location.href;
+  const SOCIALS = [
+    {
+      name: 'Facebook',
+      icon: <Iconify icon="eva:facebook-fill" width={20} height={20} color="#1877F2" />,
+    },
+    {
+      name: 'Linkedin',
+      icon: <Iconify icon="eva:linkedin-fill" width={20} height={20} color="#006097" />,
+    },
+    {
+      name: 'Twitter',
+      icon: <Iconify icon="eva:twitter-fill" width={20} height={20} color="#1C9CEA" />,
+    },
+  ];
 
+
+  
+  const theme = useTheme();
+  const { user } = useAuth();
   const isDesktop = useResponsive('up', 'sm');
+  const edit = user?._id === event?.user?._id ? true : false;
+  
   return (
     <Box sx={{ position: 'relative' }}>
+     
       <TitleStyle>{event?.title}</TitleStyle>
       <FooterStyle>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -92,27 +103,33 @@ export default function BlogPostHero({ event }:any) {
               {event?.user?.firstName}
             </Typography>
             <Typography variant="body2" sx={{ color: 'grey.500' }}>
-                {event?.eventDate.slice(0,10)}
+              {event?.eventDate.slice(0, 10)}
             </Typography>
           </Box>
         </Box>
 
-        <SpeedDial
-          direction={isDesktop ? 'left' : 'up'}
-          ariaLabel="Share post"
-          icon={<Iconify icon="eva:share-fill" sx={{ width: 20, height: 20 }} />}
-          sx={{ '& .MuiSpeedDial-fab': { width: 48, height: 48 } }}
-        >
-          {SOCIALS.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              tooltipPlacement="top"
-              FabProps={{ color: 'default' }}
-            />
-          ))}
-        </SpeedDial>
+
+        {/* {edit ? (
+            <IconButton sx={{zIndex:99,color:theme.palette.primary.main}} size="large" onClick={handleOpen}>
+            <Iconify icon={'eva:edit-2-outline'} width={24} height={24} />
+        </IconButton>) :
+        ( */}
+
+        <Box display={"flex"}>
+          <LinkedinShareButton url={url}>
+            <IconButton sx={{ zIndex: 99, }} size="large">
+              <Iconify icon={'eva:linkedin-fill'} width={24} height={24} />
+            </IconButton>
+          </LinkedinShareButton>
+          <TwitterShareButton
+            url={url}
+            title="Check This Event,It's amazing... ">
+              <IconButton sx={{ zIndex: 99, }} size="large">
+            <Iconify icon="eva:twitter-fill" width={20} height={20} color="#1C9CEA" />
+            </IconButton>
+          </TwitterShareButton>
+        </Box>
+        
       </FooterStyle>
 
       <OverlayStyle />

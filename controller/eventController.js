@@ -40,7 +40,8 @@ exports.newEvent = catchAsyncError(async (req, res, next) => {
 //show all event => /api/v1/event
 
 exports.getEvents = catchAsyncError(async (req, res, next) => {
-    const data = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }] }).populate({ path: 'comments', populate: { path: 'userId', select: ['firstName',"lastName", 'avatar'] } });
+    let now = new Date();
+    const data = await Event.find({ $or: [{ status: 'Active' }, { status: 'Upcoming' }, { status: 'Finished' } ] }).populate({ path: 'comments', populate: { path: 'userId', select: ['firstName',"lastName", 'avatar'] } });
     const event =data.map(e => {
         return newEvents ={
             _id: e._id,
@@ -58,6 +59,8 @@ exports.getEvents = catchAsyncError(async (req, res, next) => {
             }, 0) / e.comments.length
         }
     })
+
+
     res.status(200).json({
         success: true,
         event
@@ -67,8 +70,8 @@ exports.getEvents = catchAsyncError(async (req, res, next) => {
 
 //event detail => /api/event/:id
 exports.eventDetail = catchAsyncError(async (req, res, next) => {
-    const event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ['name', 'avatar'] } }).populate({ path: 'user', select: ['lastName',"firstName", 'avatar'] });
-   
+    const event = await Event.findById(req.params.id).populate({ path: 'comments', populate: { path: 'userId', select: ["firstName", 'avatar'] } }).populate({ path: 'user', select: ['lastName',"firstName", 'avatar'] });
+    
     res.status(200).json({
         succes: true,
         event
@@ -103,14 +106,15 @@ exports.updateStatus = catchAsyncError(async (req, res, next) => {
 
 exports.updateEvent = catchAsyncError(async (req, res, next) => {
     let event = await Event.findById(req.params.id);
-
+    
     if (!event) {
         res.status(404).json({
             succes: false,
             message: 'event not found'
         })
     }
-
+    event.status = "Pending";
+    await event.save();
     event = await Event.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
@@ -130,6 +134,11 @@ exports.deleteEvent = catchAsyncError(async (req, res, next) => {
     if (!event) {
         return next(new ErrorHandler('Event not found', 404))
     }
+
+    User.findOneAndUpdate({ _id: event.user }, {
+        $pull: { events: event._id }
+    }, { new: true })
+    
 
     event.comments.forEach(async (comment) => {
         await Comment.findByIdAndDelete(comment);

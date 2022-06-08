@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, Button } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { createEvent, resetError } from 'src/redux/slices/event';
 import { dispatch, useSelector } from 'src/redux/store';
 import * as Yup from 'yup';
@@ -33,22 +33,22 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
         note: Yup.string()
     });
 
-   
+
     const defaultValues = {
         title: "",
         description: "",
         eventImage: "",
         eventDate: "",
         eventEndDate: "",
-        note:"",
+        note: "",
     };
 
     const methods = useForm({
         resolver: yupResolver(DialogSchema),
         defaultValues,
     });
-    const eventDate= methods.watch("eventDate");
-    
+    const eventDate = methods.watch("eventDate");
+
     const minDate = new Date().toISOString().split("T")[0];
 
     const minEndDate = eventDate ? new Date(eventDate) : new Date(minDate);
@@ -82,6 +82,19 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
         },
         [setValue]
     );
+    useEffect(() => {
+        if (error !== null && error !== "Pending") {
+            enqueueSnackbar(error, {
+                variant: 'error',
+            })
+        } else if (error !== "Pending" && error === null) {
+            enqueueSnackbar('Request sended! Wait for admin response.', {
+                variant: 'success',
+            })
+            reset()
+            setOpenDialog(false)
+        }
+    }, [error])
 
     const onSubmit = async (data: any) => {
         try {
@@ -94,17 +107,8 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
                     long: e.lngLat[0]
                 }
             }
-            dispatch(resetError()) 
+            dispatch(resetError())
             await dispatch(createEvent(newData))
-                if (error) {
-                    enqueueSnackbar('Something went wrong!', { variant: 'error' });
-                    dispatch(resetError()) 
-                }
-                else {
-                    enqueueSnackbar('Your Request Sended, Admin will review it!', { variant: 'success' });
-                    reset();
-                    setOpenDialog(false);
-                }
 
         } catch (error) {
             console.error(error);
@@ -134,9 +138,9 @@ const AddEventDialog = ({ e, setOpenDialog, open }: Props) => {
                                 onDrop={handleDrop}
                             />
                             <Label>Start Date</Label>
-                            <RHFTextField InputProps={{inputProps: { min:minDate} }} type="date" name="eventDate" sx={{ mb: 2 }} />
+                            <RHFTextField InputProps={{ inputProps: { min: minDate } }} type="date" name="eventDate" sx={{ mb: 2 }} />
                             <Label>Finish Date</Label>
-                            <RHFTextField InputProps={{inputProps: { min:minEndDates} }} type="date" name="eventEndDate" sx={{ mb: 2 }} />
+                            <RHFTextField InputProps={{ inputProps: { min: minEndDates } }} type="date" name="eventEndDate" sx={{ mb: 2 }} />
                             <RHFTextField name="note" label="Add Some Note for Admin" sx={{ mb: 2 }} />
                         </Grid>
                     </Grid>

@@ -1,25 +1,15 @@
 // @mui
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
+import AllEvents from 'src/components/dialogs/AllEvents';
 import EventsDialog from 'src/components/dialogs/EventsDialog';
+import { FinishedEvents } from 'src/components/FinishedEvents';
 import { getEvents } from 'src/redux/slices/event';
 import { dispatch } from 'src/redux/store';
-import { ContactMap } from 'src/sections/contact';
 import HomeMap, { Tooltip } from 'src/sections/home/HomeMap';
 // components
 import Page from '../components/Page';
 // sections
-import {
-  HomeHero,
-  HomeMinimal,
-  HomeDarkMode,
-  HomeLookingFor,
-  HomeColorPresets,
-  HomePricingPlans,
-  HomeAdvertisement,
-  HomeCleanInterfaces,
-  HomeHugePackElements,
-} from '../sections/home';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +44,8 @@ export default function HomePage() {
     <Page title="Home">
       <RootStyle>
         <ContentStyle>
-          <EventsDialog viewport={viewport} setViewport={setViewport}  tooltip={tooltip} setTooltip={setTooltip}/>
+          <AllEvents viewport={viewport} setViewport={setViewport}  tooltip={tooltip} setTooltip={setTooltip}/>
+          {/* <EventsDialog viewport={viewport} setViewport={setViewport}  tooltip={tooltip} setTooltip={setTooltip}/> */}
           <HomeMap viewport={viewport} setViewport={setViewport} tooltip={tooltip} setTooltip={setTooltip} />
         </ContentStyle>
       </RootStyle>

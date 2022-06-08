@@ -28,4 +28,5 @@ router.route("/admin/events/mostcommented").get(isAuthenticatedUser,authorizeRol
 router.route('/admin/comments').get(isAuthenticatedUser,authorizeRoles('Admin'),getAllComments);
 router.route('/admin/comment/:id').delete(isAuthenticatedUser,authorizeRoles('Admin'),deleteComment);
 
+
 module.exports = router;

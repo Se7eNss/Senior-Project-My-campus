@@ -10,13 +10,20 @@ export type EventState = {
 export type Eve = {
     _id: string;
     title:string,
+    user:{
+        _id:string,
+    }
     location:{
         lat:number,
         long:number
     },
     description:string,
     status:string,
+    eventImage:{
+        url:string
+    },
     comments:object[],
     eventDate:string,
+    eventEndDate:string,
     createdDate:string
 }

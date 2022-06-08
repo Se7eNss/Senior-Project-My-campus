@@ -8,6 +8,8 @@ import useAuth from 'src/hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
+
+
 const ICON_SIZE = {
   width: 22,
   height: 22,
@@ -20,6 +22,7 @@ export const menuAuthConfig = [
     icon: <Iconify icon={'eva:home-fill'} {...ICON_SIZE} />,
     path: '/',
   },
+  
   {
     title: 'Profile',
     icon: <Iconify icon={'eva:book-open-fill'} {...ICON_SIZE} />,

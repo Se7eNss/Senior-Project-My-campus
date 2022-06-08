@@ -10,8 +10,9 @@ import { FlyToInterpolator } from 'react-map-gl'
 import * as d3 from 'd3-ease';
 import { useNavigate } from 'react-router-dom'
 import { useSnackbar } from 'notistack'
+import { randomNumberRange } from 'src/_mock/funcs'
 
-const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
+const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip,type }: any) => {
     const theme = useTheme()
     const navigate = useNavigate() 
     const {enqueueSnackbar} = useSnackbar()
@@ -19,7 +20,8 @@ const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
     const handleCloseDialog = () => {
         dispatch(setOpenEvents(false))
     };
-
+    const active = events.filter(event => event.status === type)
+    
     const eventDetail = async(event: any) => {
         await dispatch(getEventDetail(event))
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -28,17 +30,16 @@ const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
     }
 
     const flyToLocation = (event: any) => {
-        console.log(event.location);
         setViewport({
             ...viewport,
             latitude: event.location.lat,
             longitude: event.location.long,
             zoom: 17.41,
-            maxZoom: 18,
+            maxZoom: 18.41,
             minZoom: 16,
             pitch: 55,
-            bearing: 170,
-            transitionDuration: 3000,
+            bearing: randomNumberRange(160,190),
+            transitionDuration: 3500,
             transitionInterpolator: new FlyToInterpolator(),
             transitionEasing: d3.easeCubic
         })
@@ -47,19 +48,8 @@ const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
     }
 
     return (
-        <Dialog
-            sx={{ '& .MuiDialog-paper': { width: '50%', maxHeight: 600 } }}
-            maxWidth="md"
-            scroll='paper'
-            open={open}
-            onClose={handleCloseDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle sx={{ display: "flex", justifyContent: "center", padding: 2 }} >Events</DialogTitle>
-            <DialogContent>
                 <Grid container >
-                    {events?.map((event: any) => (
+                    {active.length > 0 ? active.map((event: any) => (
                         <Box key={event._id} width={"100%"} display="flex" boxShadow={theme.shadows[8]}>
                             <Box width={1 / 3} p={2}>
                                 <Image ratio="6/4" src={event.eventImage.url} />
@@ -87,10 +77,12 @@ const EventsDialog = ({ viewport, setViewport,tooltip,setTooltip }: any) => {
                                 </Box>
                             </Box>
                         </Box>
-                    ))}
+                    )):(
+                        <Box p={2}>
+                            <Typography variant="h6">No {type} Event</Typography>
+                        </Box>
+                    )}
                 </Grid>
-            </DialogContent>
-        </Dialog>
     )
 }
 

@@ -83,7 +83,7 @@ type PostContentProps = {
 
 export function PostContent({ comment }: PostContentProps) {
   const isDesktop = useResponsive('up', 'md');
-
+  console.log(comment);
 
   return (
     <CardContent
@@ -100,7 +100,7 @@ export function PostContent({ comment }: PostContentProps) {
           color: 'text.disabled',
         }}
       >
-        ss
+        {comment.userId?.firstName}
       </Typography>
 
       <TextMaxLine

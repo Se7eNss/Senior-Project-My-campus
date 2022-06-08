@@ -14,6 +14,7 @@ import {
     MapControlScale,
     MapControlNavigation,
     MapControlGeolocate,
+    MapInfo,
 } from '../../components/map';
 import { dispatch, useSelector } from 'src/redux/store';
 import { getEventDetail, getEvents } from 'src/redux/slices/event';
@@ -118,6 +119,7 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
                 onDblClick={handleDblClick}
             >
                 <MapControlScale />
+                <MapInfo/>
                 {events?.map((e: any, i: any) => (
                     <MapControlMarker
                         e={e.title}
@@ -142,14 +144,14 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
                             cursor: 'pointer'
                         }}
                     >
-                        <Box sx={{ position: 'relative', height: '100%' }}>
+                        <Box sx={{ position: 'relative' }}>
                             <Image src={tooltip.eventImage.url} ratio="4/3" sx={{ borderRadius: 1.5 }} />
                         </Box>
                         <Typography variant="subtitle2" sx={{ m: 0.5 }}>
                             {tooltip.title}
                         </Typography>
                         <Typography component="p" variant="caption" sx={{ m: 0.5 }}>
-                            {tooltip.description.slice(0, 100)}...
+                            {tooltip.description.slice(0, 70)}...
                         </Typography>
                         <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                             <AvatarGroup max={2} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
@@ -161,13 +163,13 @@ const HomeMap = ({ viewport, setViewport, setTooltip, tooltip }: Props) => {
                             </AvatarGroup>
                             <Tooltip title="Start Date" placement='right'>
                                 <Typography component="p" variant="caption" sx={{ m: 1, display: 'flex', alignItems: 'center' }}>
-                                    {tooltip.eventDate.substring(0, 10)+"--"+tooltip.eventEndDate?.substring(0, 10)}
+                                    {tooltip.eventDate.substring(0, 10)} <br /> {tooltip.eventEndDate?.substring(0, 10)}
                                 </Typography>
                             </Tooltip>
                         </Box>
                         <Box p={1} display={'flex'} flexDirection="column" justifyContent={"center"} alignItems="center" gap={1}>
                             <Rating precision={0.5} value={tooltip.rate} readOnly size="small" />
-                            <Chip sx={{ cursor: "pointer" }} label={tooltip.status} color={tooltip.status === "Active" ? 'success' : 'warning'} size="small" />
+                            <Chip sx={{ cursor: "pointer" }} label={tooltip.status} color={tooltip.status === "Active" ? 'success' : tooltip.status === "Upcoming" ? 'warning' : "error"} size="small" />
                         </Box>
                     </MapControlPopup>
                 )}

@@ -1,6 +1,6 @@
 import { IconButton, MenuItem, Divider } from '@mui/material'
 import { useSnackbar } from 'notistack'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ICON } from 'src/config'
 import axios from 'src/utils/axios'
 import Iconify from '../Iconify'
@@ -9,7 +9,7 @@ import AdminDeleteDialog from './AdminDeleteDialog'
 import ChangePWDialog from './ChangePWDialog'
 import ShowOnMapDialog from './ShowOnMapDialog'
 
-const AdminMoreMenu = ({ params, types }: any) => {
+const AdminMoreMenu = ({ params, types}: any) => {
     const [open, setOpen] = useState<HTMLElement | null>(null);
     const [openMap, setOpenMap] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -23,12 +23,17 @@ const AdminMoreMenu = ({ params, types }: any) => {
         } else {
             enqueueSnackbar('Error', { variant: 'error' });
         }
-    
+        
     };
     
+    
+    const handleClose = () => {
+        setOpen(null);
+    };
 
     const handleOpenMap = () => {
             setOpenMap(true);
+            handleClose();
     }
 
     const ICON = {
@@ -38,9 +43,7 @@ const AdminMoreMenu = ({ params, types }: any) => {
     };
 
 
-    const handleClose = () => {
-        setOpen(null);
-    };
+    
     return (
         <>
             <AdminDeleteDialog open={openDelete} post={params.row} setOpen={setOpenDelete} types={types} />
@@ -62,7 +65,7 @@ const AdminMoreMenu = ({ params, types }: any) => {
                 }}
             >
 
-                <MenuItem onClick={() => setOpenDelete(true)} >
+                <MenuItem onClick={() => {setOpenDelete(true);handleClose()}} >
                     <Iconify color={"red"} icon={'fluent:delete-16-regular'} sx={{ ...ICON }} />
                     Delete {types === "event" ? "event" : "comment"}
 

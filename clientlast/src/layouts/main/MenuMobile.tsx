@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode } from 'react';
-import { NavLink as RouterLink, useLocation } from 'react-router-dom';
+import { NavLink as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import {
@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemButton,
   ListItemButtonProps,
+  Button,
 } from '@mui/material';
 // config
 import { NAVBAR } from '../../config';
@@ -24,6 +25,9 @@ import { IconButtonAnimate } from '../../components/animate';
 import { NavSectionVertical } from '../../components/nav-section';
 //
 import { MenuProps, MenuItemProps } from './type';
+import useAuth from 'src/hooks/useAuth';
+import { dispatch } from 'src/redux/store';
+import { setOpenEvents } from 'src/redux/slices/event';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +55,12 @@ export default function MenuMobile({ isOffset, isHome, navConfig}: MenuProps) {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { user,logout } = useAuth()
+
+  const navigate = useNavigate();
+
+  const isAuth = user ? true : false
+
   useEffect(() => {
     if (drawerOpen) {
       handleDrawerClose();
@@ -69,6 +79,11 @@ export default function MenuMobile({ isOffset, isHome, navConfig}: MenuProps) {
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
+
+  const openEventsDialog = () => {
+    navigate('/home');
+    dispatch(setOpenEvents(true))
+  }
 
   return (
     <>
@@ -96,6 +111,11 @@ export default function MenuMobile({ isOffset, isHome, navConfig}: MenuProps) {
             {navConfig.map((link) => (
               <MenuMobileItem key={link.title} item={link} isOpen={open} onOpen={handleOpen} />
             ))}
+            {isAuth && <Box ml={2} display={"flex"} flexDirection="column" justifyContent={"start"} alignItems="flex-start">
+                <Button startIcon={<Iconify height={22} width={22} icon={'carbon:location-filled'}></Iconify>} onClick={openEventsDialog}  sx={{fonstSize:"13px"}} >Events</Button>
+                <Button color="error"  startIcon={<Iconify height={22} width={22} icon={'carbon:logout'}></Iconify>} sx={{fonstSize:"13px"}} onClick={logout}>Logout</Button>
+            </Box>  }
+            
           </List>
         </Scrollbar>
       </Drawer>

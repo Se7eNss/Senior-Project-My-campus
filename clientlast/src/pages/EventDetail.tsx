@@ -2,8 +2,10 @@ import { Box, Card, Container, Divider, Pagination, styled, Typography, useTheme
 import numeral from 'numeral';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router';
+import EditEventDialog from 'src/components/dialogs/EditEventDialog';
 import Markdown from 'src/components/Markdown';
 import Page from 'src/components/Page'
+import useAuth from 'src/hooks/useAuth';
 import { getEventDetail } from 'src/redux/slices/event';
 import { dispatch, useSelector } from 'src/redux/store'
 import { BlogPostHero, BlogPostTags, BlogPostCommentList, BlogPostCommentForm } from 'src/sections/blog';
@@ -20,10 +22,18 @@ const EventDetail = () => {
     const theme = useTheme()
     const [page, setPage] = useState(3)
     const [before, setBefore] = useState(0)
+    
     const { event } = useSelector(state => state.event)
     const { id = "" } = useParams()
+    // const [editEvent, setEditEvent] = useState(false)
+    
+    // const handleOpen = () => {
+    //   setEditEvent(true)
+    // }
     useEffect(() => {
-        dispatch(getEventDetail(id))
+        (async () => {
+            await dispatch(getEventDetail(id))
+        })();
     }, [])
 
     const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -33,9 +43,10 @@ const EventDetail = () => {
     return (
         <Page title='Event Detail'>
             <RootStyle>
+            {/* <EditEventDialog setEditEvent={setEditEvent} editEvent={editEvent}   /> */}
                 <Container>
                     <Card>
-                        <BlogPostHero event={event} />
+                        <BlogPostHero event={event}  />
 
                         <Box sx={{ p: { xs: 3, md: 5 } }}>
                             <Typography variant="h6" sx={{ mb: 5 }}>
@@ -62,10 +73,10 @@ const EventDetail = () => {
                             <Box sx={{ mb: 5, mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                                 <Pagination onChange={handlePage} count={event?.comments && event?.comments.length > 3 ? event.comments.length % 3 > 0 ? parseInt(numeral(event?.comments.length / 3).format()) + 1 : event.comments.length / 3 : 0} color="primary" />
                             </Box>
-                            {event?.status === "deleted" ? <Typography variant="h6" sx={{ color: 'text.disabled' }}>
+                            {event?.status === "Finished" || event?.status === "Closed" ? <Typography variant="h6" sx={{ color: 'text.disabled' }}>
                                 Event is not active yet
-                            </Typography> : 
-                            <BlogPostCommentForm id={id} />
+                            </Typography> :
+                                <BlogPostCommentForm id={id} />
                             }
                         </Box>
                     </Card>

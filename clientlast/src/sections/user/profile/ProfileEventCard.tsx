@@ -43,8 +43,8 @@ const ProfileEventCard = ({ eve }: any) => {
                 }
                 action={
                     <>
-                        <Tooltip title={eve.status === "Active" ? " Active Now " : "Waiting For Admin Permission"}>
-                            <Chip label={eve.status} color={eve.status === "Active" ? 'success' : 'warning'} size="small" />
+                        <Tooltip title={eve.status === "Active" ? " Active Now " : eve.status === "Pending" ?  "Waiting For Admin Permission" : eve.status === "Closed" || eve.status === "Finished" ?  "Event Finished" : eve.status === "Upcoming" && "Upcoming Event"}>
+                            <Chip label={eve.status} color={eve.status === "Active" ? 'success' : eve.status === "Pending" || eve.status === "Upcoming" ? 'warning' : eve.status === "Finished" || eve.status === "Closed"  ? "error" : "warning" } size="small" />
                         </Tooltip>
                         <Tooltip title={eve.seenByAdmin === true ? " Seen by admin wait for response " : "Not Seen by admin"}>
                             <Chip sx={{ml:1}} label={eve.seenByAdmin === true ? "Seen" : "Not Seen"} color={eve.seenByAdmin === true ? 'success' : 'warning'} size="small" />

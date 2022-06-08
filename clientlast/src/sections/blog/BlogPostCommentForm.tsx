@@ -8,9 +8,9 @@ import { Typography, Stack, Rating, FormHelperText } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { FormProvider, RHFTextField, RHFUploadSingleFile } from '../../components/hook-form';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { dispatch, useSelector } from 'src/redux/store';
-import { createComment } from 'src/redux/slices/event';
+import { createComment, resetError, resetErrorComment } from 'src/redux/slices/event';
 import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
@@ -53,19 +53,35 @@ export default function BlogPostCommentForm({id}:any) {
     formState: { isSubmitting },
   } = methods;
 
+
+  useEffect(() => {
+   if(error !== null && error !== "Pending"){
+     enqueueSnackbar(error, {
+       variant: 'error',
+     })
+   }else if(error !== "Pending" && error === null){
+      enqueueSnackbar('Comment added', {
+        variant: 'success',
+      })
+   }
+  }, [error])
+  
+
   const onSubmit = async (data: any) => {
     try {
       data.eventId=id
       data.image=image
       console.log(data)
       await dispatch(createComment(data));
-      if(error === null){
-        enqueueSnackbar('Comment created successfully', {variant: 'success'})
-      }
-      else{
-        enqueueSnackbar(error, {variant: 'error'})
-      }
+      // if(error !== null){
+      //   enqueueSnackbar(error, {variant: 'error'})
+        
+      // }
+      // else{
+      //   enqueueSnackbar('Comment created successfully', {variant: 'success'})
+      // }
       reset();
+      dispatch(resetErrorComment());
     } catch (error) {
       console.error(error);
     }

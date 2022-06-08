@@ -26,11 +26,22 @@ exports.changeUserStatus = catchAsyncError(async(req,res,next)=>{
     }
 }
 )
+// exports.changeEventDate = catchAsyncError(async(req,res,next)=>{
+//     date = req.body
+//     console.log(date)
+//     try {
+//         const event = await Event.findOneAndUpdate({id:req.params.id},{eventDate:date},{new:true});
+//         res.json({event})
+//     } catch (err) {
+//         return res.status(500).json({msg: err.message})
+//     }
+// })
 
 exports.getAllEvents = catchAsyncError(async(req,res,next)=>{
+    let now = new Date();
     try {
         const events = await Event.find().populate({path:'user',select: ['firstName',"lastName"]});
-        res.json({events})
+        res.status(200).json({events})
     } catch (err) {
         return res.status(500).json({msg: err.message})
     }
