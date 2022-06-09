@@ -16,7 +16,7 @@ const AdminEvents = () => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [events,setEvents] = useState([]);
-  let open = false;
+  const [opens, setOpens] = useState(false)
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 ,hide: true,valueGetter: (params: GridValueGetterParams) => params.row._id },
     {
@@ -80,6 +80,19 @@ const AdminEvents = () => {
         ],
     },
     {
+      field: 'commentStatus',
+      headerName: 'Comment Status',
+      flex: 1,
+      minWidth: 50,
+      editable: true,
+      type: 'singleSelect',
+        valueOptions: [
+          { value: true , label: "User Can Comment" },
+          { value: false , label: "User Can't Comment" }
+        ],
+      valueGetter: (params: GridValueGetterParams) => params.row.commentStatus ? "Enable" : "Disable",
+    },
+    {
       field: 's',
       headerName: '',
       width: 50,
@@ -93,23 +106,6 @@ const AdminEvents = () => {
   }
   ];
 
-  useEffect(() => {
-    axios.get(`/api/v1/admin/events`)
-      .then(res => {
-        const eventss = res.data.events.map((event:any) => {
-          return {
-            ...event,
-            id: event._id,
-            comments: event.comments.length,
-          }
-        }
-        )
-        setEvents(eventss)
-      })
-      .catch(err => {
-        enqueueSnackbar(err.response.data.message, { variant: 'error' });
-      })
-  }, [])
 
   useEffect(() => {
     (async () => {
@@ -134,11 +130,20 @@ const AdminEvents = () => {
         
       }
     })();
-  }, [open, ])
+  }, [opens, ])
 
   const handleCellEditCommit = async (params: any) => {
     if(params.field === "status"){
     const response = await axios.put(`/api/v1/admin/event/${params.id}/${params.value}`);
+    if (response.status === 200) {
+      enqueueSnackbar('Success', { variant: 'success' });
+    }
+    else {
+      enqueueSnackbar('Error', { variant: 'error' });
+    } 
+  }
+  else if(params.field === "commentStatus"){
+    const response = await axios.put(`api/v1/admin/event/commentstatus/${params.id}/${params.value}`);
     if (response.status === 200) {
       enqueueSnackbar('Success', { variant: 'success' });
     }
@@ -180,12 +185,12 @@ const AdminEvents = () => {
 
             onCellEditCommit={handleCellEditCommit}
             pageSize={50}
-            onCellClick={(params: any) =>{
-              if(params.field === "s"){
-                open = !open
-              } 
-            }
-            }
+            // onCellClick={(params: any) =>{
+            //   if(params.field === "s"){
+            //     setOpens(true)
+            //   } 
+            // }
+            // }
 
             disableSelectionOnClick
             components={{

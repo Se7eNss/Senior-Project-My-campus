@@ -62,18 +62,28 @@ const EventDetail = () => {
                             </Box> */}
 
                             <Box sx={{ display: 'flex', mb: 2 }}>
-                                <Typography variant="h4">Comments</Typography>
-                                <Typography variant="subtitle2" sx={{ color: 'text.disabled' }}>
-                                    ({event?.comments.length})
-                                </Typography>
+                                {event?.commentStatus === true && (
+                                        <>
+                                        <Typography variant="h4">Comments</Typography>
+                                        <Typography variant="subtitle2" sx={{ color: 'text.disabled' }}>
+                                            ({event?.comments.length})
+                                        </Typography>
+                                        </>) 
+                                }
+                                
                             </Box>
+                                {event?.commentStatus === true ? (
+                                         <BlogPostCommentList event={event} page={page} before={before} />):
+                                            (<Typography variant="h4">Comments are disabled</Typography>)
+                                            
+                                }
 
-                            <BlogPostCommentList event={event} page={page} before={before} />
+                           
 
                             <Box sx={{ mb: 5, mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                                 <Pagination onChange={handlePage} count={event?.comments && event?.comments.length > 3 ? event.comments.length % 3 > 0 ? parseInt(numeral(event?.comments.length / 3).format()) + 1 : event.comments.length / 3 : 0} color="primary" />
                             </Box>
-                            {event?.status === "Finished" || event?.status === "Closed" ? <Typography variant="h6" sx={{ color: 'text.disabled' }}>
+                            {event?.status === "Finished" || event?.status === "Closed"  ? <Typography variant="h6" sx={{ color: 'text.disabled' }}>
                                 Event is not active yet
                             </Typography> :
                                 <BlogPostCommentForm id={id} />

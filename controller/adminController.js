@@ -2,6 +2,7 @@ const catchAsyncError = require('../middlewares/catchAsyncError');
 const Event = require('../models/event');
 const User = require('../models/user');
 const Comment = require('../models/comment');
+const Report = require('../models/report');
 const ErrorHandler = require('../utils/errorHandler');
 
 
@@ -26,6 +27,17 @@ exports.changeUserStatus = catchAsyncError(async(req,res,next)=>{
     }
 }
 )
+
+exports.changeEventCommentStatus = catchAsyncError(async(req,res,next)=>{
+    try {
+        const event = await Event.findOneAndUpdate({_id:req.params.id},{commentStatus:req.params.status},{new:true});
+        res.json({event})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
 // exports.changeEventDate = catchAsyncError(async(req,res,next)=>{
 //     date = req.body
 //     console.log(date)
@@ -168,6 +180,42 @@ exports.deleteComment = catchAsyncError(async(req,res,next)=>{
         })
 
         res.json({msg: 'Deleted Comment!'})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
+exports.getAllReports = catchAsyncError(async(req,res,next)=>{
+    try {
+        const reports = await Report.find().populate({path:'userId',select: ['firstName','lastName', 'avatar','_id']}).populate({path:'eventId',select: ['title',"eventImage",'_id']}).populate({path:'commentId',select: ['comment','image','_id']});
+        res.json({reports})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
+exports.getUnseenReports = catchAsyncError(async(req,res,next)=>{
+    try {
+        const reports = await Report.find({seenByAdmin:false}).populate({path:'userId',select: ['firstName',"lastName","avatar"]});
+        res.json({reports})
+    } catch (err) {
+        return res.status(500).json({msg: err.message})
+    }
+}
+)
+
+exports.reportSeenByAdmin = catchAsyncError(async(req,res,next)=>{
+    try {
+        const reports = await Report.find();
+        reports.forEach(report => {
+            report.seenByAdmin = true;
+            report.save();
+        })
+
+        
+        res.json({reports})
     } catch (err) {
         return res.status(500).json({msg: err.message})
     }

@@ -2,7 +2,7 @@ import { paramCase } from 'change-case';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Card, Avatar, Typography, CardContent, Stack, LinearProgress, Rating } from '@mui/material';
+import { Box, Link, Card, Avatar, Typography, CardContent, Stack, LinearProgress, Rating, IconButton } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -18,6 +18,8 @@ import TextMaxLine from '../../components/TextMaxLine';
 import TextIconLabel from '../../components/TextIconLabel';
 import SvgIconStyle from '../../components/SvgIconStyle';
 import { TabContext } from '@mui/lab';
+import { useState } from 'react';
+import ReportDialog from 'src/components/dialogs/ReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -38,10 +40,15 @@ type Props = {
 
 export default function BlogPostCard({ comment }: Props) {
   const isDesktop = useResponsive('up', 'md');
-
+  const [openReport, setOpenReport] = useState(false);
+  console.log(comment);
   return (
     <Card>
+      <ReportDialog setOpenDialog={setOpenReport} open={openReport} id={comment?._id} type={"comment"}/>
       <Box sx={{ position: 'relative' }}>
+        <IconButton onClick={()=>setOpenReport(true)} sx={{ zIndex: 99,position:"absolute" }} size="large">
+              <Iconify sx={{color:"red"}} icon="ic:baseline-report-gmailerrorred" width={25} height={25} color="#1877F2" />
+            </IconButton>
         <SvgIconStyle
           src="https://minimal-assets-api.vercel.app/assets/icons/shape-avatar.svg"
           sx={{

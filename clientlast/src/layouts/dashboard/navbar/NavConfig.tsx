@@ -13,6 +13,7 @@ const ICONS = {
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
   chat: getIcon('ic_chat'),
+  report: getIcon('ic_report'),
 };
 
 const navConfig = [
@@ -29,6 +30,7 @@ const navConfig = [
       },
       { title: 'Events', path: '/admin/events', icon: ICONS.booking },
       { title: 'Comments', path: '/admin/comments', icon: ICONS.chat },
+      { title:"Reports",path:'/admin/reports',icon:ICONS.report},
     ],
   },
 ];

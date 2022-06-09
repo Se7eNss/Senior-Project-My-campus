@@ -1,6 +1,6 @@
 // @mui
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Avatar, SpeedDial, Typography, SpeedDialAction, IconButton, useTheme } from '@mui/material';
+import { Box, Avatar, SpeedDial, Typography, SpeedDialAction, IconButton, useTheme, Button } from '@mui/material';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // utils
@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import EditEventDialog from 'src/components/dialogs/EditEventDialog';
 import { dispatch } from 'src/redux/store';
 import { getEventDetail } from 'src/redux/slices/event';
+import ReportDialog from 'src/components/dialogs/ReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,9 @@ const TitleStyle = styled('h1')(({ theme }) => ({
   top: 0,
   zIndex: 10,
   width: '100%',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   position: 'absolute',
   padding: theme.spacing(3),
   color: theme.palette.common.white,
@@ -90,11 +94,18 @@ export default function BlogPostHero({ event }: any) {
   const { user } = useAuth();
   const isDesktop = useResponsive('up', 'sm');
   const edit = user?._id === event?.user?._id ? true : false;
+
+  const [openReport, setOpenReport] = useState(false);
   
   return (
     <Box sx={{ position: 'relative' }}>
-     
-      <TitleStyle>{event?.title}</TitleStyle>
+      <ReportDialog setOpenDialog={setOpenReport} open={openReport} id={event?._id} type={"event"}/>
+      <TitleStyle>
+        {event?.title}
+        <IconButton onClick={()=>setOpenReport(true)} sx={{ zIndex: 99, }} size="large">
+              <Iconify sx={{color:"red"}} icon="ic:baseline-report-gmailerrorred" width={25} height={25} color="#1877F2" />
+            </IconButton>
+      </TitleStyle>
       <FooterStyle>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar alt={event?.user?.firstName} src={event?.user?.avatar.url} sx={{ width: 48, height: 48 }} />
@@ -103,7 +114,8 @@ export default function BlogPostHero({ event }: any) {
               {event?.user?.firstName}
             </Typography>
             <Typography variant="body2" sx={{ color: 'grey.500' }}>
-              {event?.eventDate.slice(0, 10)}
+              {event?.eventDate.slice(0, 10)} <br />
+              {event?.eventEndDate.slice(0, 10)}
             </Typography>
           </Box>
         </Box>

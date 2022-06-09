@@ -17,6 +17,7 @@ const user = require('./routes/user');
 const event = require('./routes/event');
 const comment = require('./routes/comment');
 const admin = require('./routes/admin');
+const report = require('./routes/report');
 
 const Event = require('./models/event');
 
@@ -41,9 +42,18 @@ schedule.scheduleJob('0 19 * * *',  async() => {
                 }
             }
             if(element.eventDate <= now && element.eventEndDate >= now) {
+                if(element.status != 'Active' && element.status == 'Upcoming') {
                 element.status = 'Active';
                 element.save();
                 console.log('events updated active');
+                }
+            }
+            if(element.status === 'Upcoming' || element.status === "Active") {
+                if(event?.commentStatus === false) {
+                    element.commentStatus = true;
+                    element.save();
+                    console.log('events updated comment status');
+                }
             }
             
         });
@@ -57,6 +67,7 @@ app.use('/api/v1',admin);
 app.use('/api/v1',user);
 app.use('/api/v1',event);
 app.use('/api/v1',comment);
+app.use('/api/v1',report);
 
 app.use(errorMiddleware);
 

@@ -26,6 +26,7 @@ const RootStyles = styled('div')(({ theme }) => ({
 
 export default function BlogPostCommentForm({id}:any) {
   const {error} = useSelector(state => state.event);
+  console.log(error)
   const {enqueueSnackbar} = useSnackbar();
   const [image, setImage] = useState<string | ArrayBuffer | null>()
   const CommentSchema = Yup.object().shape({

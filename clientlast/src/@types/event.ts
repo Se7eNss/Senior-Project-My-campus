@@ -22,6 +22,7 @@ export type Eve = {
     eventImage:{
         url:string
     },
+    commentStatus:boolean,
     comments:object[],
     eventDate:string,
     eventEndDate:string,

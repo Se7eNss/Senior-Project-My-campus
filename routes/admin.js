@@ -10,6 +10,10 @@ const { getAllUsers,
         getUnseenEvents,
         getMostCommentedEvents,
         getUsersGroupedByCreatedDates,
+        changeEventCommentStatus,
+        getAllReports,
+        getUnseenReports,
+        reportSeenByAdmin,
 
 } = require('../controller/adminController');
 const router = express.Router();
@@ -21,12 +25,15 @@ router.route('/admin/user/:id/:status').put(isAuthenticatedUser,authorizeRoles('
 router.route("/admin/users/groupedbycreatedDates").get(isAuthenticatedUser,authorizeRoles('Admin'),getUsersGroupedByCreatedDates);
 router.route('/admin/events').get(isAuthenticatedUser,authorizeRoles('Admin'),getAllEvents);
 router.route('/admin/event/:id/:status').put(isAuthenticatedUser,authorizeRoles('Admin'),changeEventStatus);
+router.route("/admin/event/commentstatus/:id/:status").put(isAuthenticatedUser,authorizeRoles('Admin'),changeEventCommentStatus);
 router.route('/admin/event/:id').delete(isAuthenticatedUser,authorizeRoles('Admin'),deleteEvent);
 router.route('/admin/events/seen/:id').put(isAuthenticatedUser,authorizeRoles('Admin'),eventSeenByAdmin);
 router.route('/admin/events/unseen').get(isAuthenticatedUser,authorizeRoles('Admin'),getUnseenEvents);
 router.route("/admin/events/mostcommented").get(isAuthenticatedUser,authorizeRoles('Admin'),getMostCommentedEvents);
 router.route('/admin/comments').get(isAuthenticatedUser,authorizeRoles('Admin'),getAllComments);
 router.route('/admin/comment/:id').delete(isAuthenticatedUser,authorizeRoles('Admin'),deleteComment);
-
+router.route("/admin/reports").get(isAuthenticatedUser,authorizeRoles('Admin'),getAllReports);
+router.route("/admin/reports/unseen").get(isAuthenticatedUser,authorizeRoles('Admin'),getUnseenReports);
+router.route("/admin/reports/seen").put(isAuthenticatedUser,authorizeRoles('Admin'),reportSeenByAdmin);
 
 module.exports = router;

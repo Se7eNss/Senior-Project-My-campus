@@ -44,6 +44,10 @@ const eventSchema = mongoose.Schema({
         required:[true,'Please Enter description!'],
         maxLenght:[170,'Your title cannot exeed 170 charcters']
     },
+    commentStatus:{
+        type:Boolean,
+        default:true
+    },
     comments:[
         {
             type:mongoose.Types.ObjectId,

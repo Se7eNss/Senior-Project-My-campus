@@ -15,6 +15,7 @@ const AdminMoreMenu = ({ params, types}: any) => {
     const [openDelete, setOpenDelete] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
+    console.log(openMap)
     const handleOpen = async(event: React.MouseEvent<HTMLElement>) => {
         setOpen(event.currentTarget);
         const response = await axios.put(`/api/v1/admin/events/seen/${params.id}`);
@@ -33,7 +34,7 @@ const AdminMoreMenu = ({ params, types}: any) => {
 
     const handleOpenMap = () => {
             setOpenMap(true);
-            handleClose();
+
     }
 
     const ICON = {
@@ -64,13 +65,13 @@ const AdminMoreMenu = ({ params, types}: any) => {
                     '& .MuiMenuItem-root': { px: 1, typography: 'body2', borderRadius: 0.75 },
                 }}
             >
-
+                {types !== 'report' && (
                 <MenuItem onClick={() => {setOpenDelete(true);handleClose()}} >
                     <Iconify color={"red"} icon={'fluent:delete-16-regular'} sx={{ ...ICON }} />
                     Delete {types === "event" ? "event" : "comment"}
 
                 </MenuItem>
-
+                )}
                 {types === "event" &&
                     <>
                         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -80,6 +81,14 @@ const AdminMoreMenu = ({ params, types}: any) => {
                         </MenuItem>
                         <ShowOnMapDialog open={openMap} setOpenDialog={setOpenMap} event={params.row} />
                     </>
+                }
+                {types === "report" &&
+                 <>
+                 <MenuItem>
+                     <Iconify icon={'bxs:map-pin'} sx={{ ...ICON }} />
+                     Show Report Object
+                 </MenuItem>
+                </>
                 }
 
             </MenuPopover>

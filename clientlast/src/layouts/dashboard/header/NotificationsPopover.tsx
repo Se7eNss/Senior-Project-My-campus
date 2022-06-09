@@ -31,8 +31,9 @@ import { useSnackbar } from 'notistack';
 // ----------------------------------------------------------------------
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState([]);
-  const totalUnRead = notifications?.filter((item:any) => item.seenByAdmin === false).length;
+  const [notifications, setNotifications] = useState<any>([]);
+  const [notificationsReport, setNotificationsReport] = useState<any>([]);
+  const totalUnRead = notifications?.filter((item:any) => item.seenByAdmin === false).length + notificationsReport?.filter((item:any) => item.seenByAdmin === false).length;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -43,7 +44,7 @@ export default function NotificationsPopover() {
       try {
         
         const response = await axios.get(`/api/v1/admin/events/unseen`);
-
+        const responseReports = await axios.get(`/api/v1/admin/reports/unseen`);
         if (response.status === 200) {
           const eventss = response.data.events.map((event:any) => {
             return {
@@ -52,6 +53,17 @@ export default function NotificationsPopover() {
           }
           )
           setNotifications(eventss)
+        } else {
+          enqueueSnackbar('Error', { variant: 'error' });
+        }
+        if (responseReports.status === 200) {
+          const reportss = responseReports.data.reports.map((report:any) => {
+            return {
+              ...report,
+            }
+          }
+          )
+          setNotificationsReport(reportss)
         } else {
           enqueueSnackbar('Error', { variant: 'error' });
         }
@@ -123,6 +135,33 @@ export default function NotificationsPopover() {
           <Typography variant="body2">No new events</Typography>
         </Box>
       }
+        {
+        notificationsReport.length > 0 ?
+        <>
+        <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+          <List
+            disablePadding
+            subheader={
+              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                New Reports
+              </ListSubheader>
+            }
+          >
+            {notificationsReport.map((notification:any,i:any) => (
+              <NotificationItem type={"report"} key={i} notification={notification} />
+            ))}
+
+          
+          </List>
+
+        </Scrollbar>
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+        </> :
+        <Box sx={{ p: 2.5, textAlign: 'center' }}>
+          <Typography variant="body2">No new Report</Typography>
+        </Box>
+      }
  
 
       </MenuPopover>
@@ -142,11 +181,11 @@ type NotificationItemProps = {
   seenByAdmin: boolean;
 };
 
-function NotificationItem({ notification }:any) {
+function NotificationItem({ notification,type }:any) {
   return (
     <ListItemButton
       component={RouterLink}
-      to={`/admin/events`}
+      to={type === "report" ? `/admin/reports` : `/admin/events`}
       sx={{
         py: 1.5,
         px: 2.5,
@@ -157,10 +196,15 @@ function NotificationItem({ notification }:any) {
       }}
     >
       <ListItemAvatar>
-        <Avatar src={notification.user.avatar?.url} sx={{ bgcolor: 'background.neutral' }}></Avatar>
+        {type === 'report' ?
+        <Avatar src={ notification.userId?.avatar?.url} sx={{ bgcolor: 'background.neutral' }}></Avatar>
+        :
+        <Avatar src={ notification.user?.avatar?.url} sx={{ bgcolor: 'background.neutral' }}></Avatar>
+        }
+        
       </ListItemAvatar>
       <ListItemText
-        primary={notification.title}
+        primary={notification.note}
         secondary={
           <Typography
             variant="caption"

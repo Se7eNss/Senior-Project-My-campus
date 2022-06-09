@@ -25,9 +25,10 @@ exports.newComment = catchAsyncError(async (req, res, next) => {
 
         const event = await Event.findById(eventId).populate({ path: 'comments', populate: { path: 'userId', select: ['firstName', "lastName", 'avatar'] } });
 
-        if (event.eventEndDate < date) return res.status(404).json({ msg: 'Event is finished' })
+        // if (event.eventEndDate < date) return res.status(404).json( 'Event is finished' )
+        if (event.commentStatus === false) return res.status(404).json( 'Disabled Comments' )
 
-        if (!event) return res.status(404).json({ msg: "This post does not exist." })
+        if (!event) return res.status(404).json("This post does not exist." )
        
         if (event.comments.some(e => e.userId.id === userId)) {
             return res.status(404).json("You have already commented this event." )
@@ -49,7 +50,7 @@ exports.newComment = catchAsyncError(async (req, res, next) => {
         res.json({ newComment })
 
     } catch (err) {
-        return res.status(500).json({ msg: err.message })
+        return res.status(500).json(err.message)
     }
 })
 
@@ -60,7 +61,7 @@ exports.getUserComments = catchAsyncError(async (req, res, next) => {
         const comments = await Comment.find({ userId: userId }).populate({ path: 'eventId', select: ['title', 'comments'] }).populate({ path: 'userId', select: ['name', 'avatar'] })
         res.json({ comments })
     } catch (err) {
-        return res.status(500).json({ msg: err.message })
+        return res.status(500).json(err.message)
     }
 })
 
@@ -83,6 +84,6 @@ exports.deleteComment = catchAsyncError(async (req, res, next) => {
         res.json({ msg: 'Deleted Comment!' })
 
     } catch (err) {
-        return res.status(500).json({ msg: err.message })
+        return res.status(500).json( err.message )
     }
 })

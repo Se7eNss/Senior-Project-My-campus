@@ -17,6 +17,7 @@ import AdminHome from 'src/pages/admin/AdminHome';
 import AdminEvents from 'src/pages/admin/AdminEvents';
 import AdminUsers from 'src/pages/admin/AdminUsers';
 import AdminComments from 'src/pages/admin/AdminComments';
+import AdminReports from 'src/pages/admin/AdminReports';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +34,7 @@ const Loadable = (Component: ElementType) => (props: any) => {
 
 export default function Router() {
 
-  const {user} =useAuth()
+  const { user } = useAuth()
   return useRoutes([
     {
       path: 'auth',
@@ -61,40 +62,41 @@ export default function Router() {
       ],
     },
     {
-      path:'/user',
-      element: <AuthGuard><MainLayout/></AuthGuard>  ,
-      children:[
-        { path: 'profile', element:<Profile/> },
-        { path: 'profile/:id', element:<OthersProfile/> },
+      path: '/user',
+      element: <AuthGuard><MainLayout /></AuthGuard>,
+      children: [
+        { path: 'profile', element: <Profile /> },
+        { path: 'profile/:id', element: <OthersProfile /> },
         { path: '*', element: <Navigate to="/404" replace /> },
       ]
     },
     {
-      path:'/event',
-      element: <AuthGuard><MainLayout/></AuthGuard>  ,
-      children:[
-        { path: 'detail/:id', element:<EventDetail/> },
+      path: '/event',
+      element: <AuthGuard><MainLayout /></AuthGuard>,
+      children: [
+        { path: 'detail/:id', element: <EventDetail /> },
         { path: '*', element: <Navigate to="/404" replace /> },
       ]
     },
     {
       path: '*',
-      element:<MainLayout/>  ,
+      element: <MainLayout />,
       children: [
         { element: <Navigate to="/home" replace />, index: true },
-        { path: 'home', element: <HomePage/> },
+        { path: 'home', element: <HomePage /> },
         { path: '*', element: <Navigate to="/404" replace /> },
       ],
     },
     {
-      path:'/admin',
-      element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout/></RoleBasedGuard>  ,
-      children:[
+      path: '/admin',
+      element: <RoleBasedGuard accessibleRoles={["Admin"]} ><DashboardLayout /></RoleBasedGuard>,
+      children: [
         { element: <Navigate to="dashboard" replace />, index: true },
-        { path: 'dashboard', element:<AdminHome/> },
-        { path: 'users', element:<AdminUsers/> },
-        { path: 'events', element:<AdminEvents/> },
-        { path: 'comments', element:<AdminComments/> },
+        { path: 'dashboard', element: <AdminHome /> },
+        { path: 'users', element: <AdminUsers /> },
+        { path: 'events', element: <AdminEvents /> },
+        { path: 'comments', element: <AdminComments /> },
+        { path: "reports", element: <AdminReports /> },
         { path: '*', element: <Navigate to="/404" replace /> },
       ]
     },
